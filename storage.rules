@@ -1,0 +1,30 @@
+rules_version = '2';
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FIREBASE STORAGE SECURITY RULES — Bro App
+// ═══════════════════════════════════════════════════════════════════════════
+// Deploy: firebase deploy --only storage
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ── Profile Images ─────────────────────────────────────────────────
+    // Users can read any profile image (shown on bro lists, recommendations)
+    // Users can only write/delete their own profile image
+    // Max size: 5MB, must be an image
+    match /profile_images/{userId}/{fileName} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+      allow delete: if request.auth != null
+        && request.auth.uid == userId;
+    }
+
+    // ── Default: deny everything else ──────────────────────────────────
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

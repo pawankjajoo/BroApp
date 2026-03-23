@@ -1,0 +1,81 @@
+{
+  "expo": {
+    "name": "Bro",
+    "slug": "bro-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0d0d0d",
+    "scheme": "com.broapp.bro",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0a0a"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.broapp.bro",
+      "buildNumber": "1",
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Bro-ximity uses your location to find nearby bros.",
+        "NSBluetoothAlwaysUsageDescription": "Bro uses Bluetooth to detect nearby bros.",
+        "NSPhotoLibraryUsageDescription": "Choose a photo for your bro-file.",
+        "NSCameraUsageDescription": "Take a photo for your bro-file.",
+        "SKPaymentQueueTransactionObserverSupportedPaymentNetworks": [
+          "Visa", "MasterCard", "AmericanExpress", "Discover", "ApplePay"
+        ]
+      },
+      "entitlements": {
+        "com.apple.developer.in-app-payments": ["merchant.com.broapp.bro"],
+        "aps-environment": "production"
+      },
+      "config": {
+        "usesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0d0d0d"
+      },
+      "package": "com.broapp.bro",
+      "versionCode": 1,
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "BLUETOOTH",
+        "BLUETOOTH_ADMIN",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "com.android.vending.BILLING",
+        "POST_NOTIFICATIONS"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-font",
+      "expo-image-picker",
+      "expo-crypto",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#ffe066"
+        }
+      ],
+      "react-native-iap"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "YOUR-EAS-PROJECT-ID-HERE"
+      }
+    },
+    "owner": "YOUR-EXPO-USERNAME"
+  }
+}
