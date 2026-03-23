@@ -1,0 +1,151 @@
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+  BRO APP — PRIVACY POLICY
+  Legal disclosure covering data collection, usage, and user rights.
+═══════════════════════════════════════════════════════════════════════════════
+
+SECTIONS COVERED:
+  • Information We Collect: Profile data, device fingerprinting, location (Bro-ximity),
+    transaction records, and push notification tokens
+  • How We Use Your Information: App functionality, transactions, abuse prevention,
+    and anonymized platform analytics
+  • Information Sharing: Profile visibility to other users, Firebase service providers,
+    legal compliance disclosures
+  • Data Retention: Account data lifecycle & deletion options
+  • Security: Firebase protections, HTTPS encryption, image validation
+  • Children's Privacy: COPPA compliance (13+ only)
+  • Your Choices: Profile management, notification toggles, account deletion
+  • Contact: privacy@broapp.com
+
+DESIGN PHILOSOPHY:
+  Privacy-first. Minimal data collection. No tracking, no ads, no sell-offs.
+  Users control what's public. Everything else stays locked down.
+  Ready to play. No friction. Just transparency.
+
+KEY HIGHLIGHTS:
+  ✓ No account IMEI, advertising IDs, or hardware serial collection
+  ✓ Location data never stored on servers or shared with other users
+  ✓ BroCoin ledger fully anonymized — no user identity exposed
+  ✓ User bro lists are NEVER visible to others
+  ✓ BroCoin balances are private (owner-only)
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bro — Privacy Policy</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 720px; margin: 0 auto; padding: 24px 16px; color: #222; line-height: 1.6; background: #fafafa; }
+  h1 { font-size: 24px; margin-bottom: 4px; }
+  h2 { font-size: 18px; margin-top: 28px; border-bottom: 1px solid #ddd; padding-bottom: 6px; }
+  .updated { font-size: 13px; color: #666; margin-bottom: 24px; }
+  ul { padding-left: 20px; }
+  li { margin-bottom: 6px; }
+  a { color: #4a90d9; }
+</style>
+</head>
+<body>
+
+<h1>Privacy Policy</h1>
+<p class="updated">Last updated: March 9, 2026</p>
+
+<p>Bro ("we", "us", or "the app") is a social application that lets friends communicate through preset expressions and send virtual currency called Bro Bucks (BB). This Privacy Policy explains what information we collect, how we use it, and your choices.</p>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════
+     SECTION 1: DATA COLLECTION
+     What we gather (and critically, what we DON'T).
+     Profile data, device tracking for fraud prevention, location (opt-in only),
+     transaction ledgers, push tokens. Minimal by design. ═════════════════════════════════════════════════════════════════════════════════ -->
+<h2>1. Information We Collect</h2>
+
+<p><strong>Account Information.</strong> When you create an account we collect your email address, display name, and a profile image you optionally upload. If you sign in with Google or Facebook we receive only the basic profile information (name, email, profile photo) that those services share through their standard OAuth flow.</p>
+
+<p><strong>Profile Details.</strong> You may optionally add your workplace or school and one "interesting thing" about yourself. Workplace and school entries can be verified by peers.</p>
+
+<p><strong>Device Information.</strong> We generate an anonymous device fingerprint (a one-way hash of your device model, OS version, and a random salt) solely to enforce our one-account-per-person policy. We do not collect your device IMEI, advertising ID, or precise hardware serial numbers.</p>
+
+<p><strong>Location.</strong> The Bro-ximity feature uses your approximate location only while you are actively using that feature. Location data is never stored on our servers or shared with other users beyond the "nearby" indicator.</p>
+
+<p><strong>Transaction Data.</strong> We record Bro Bucks purchases and peer-to-peer transfers (bro-nations) to maintain your wallet balance and for platform integrity. BroCoin minting events are logged in an anonymized public ledger that does not reveal recipient identities.</p>
+
+<p><strong>Push Notification Tokens.</strong> If you enable notifications we store the Expo push token associated with your device so we can deliver bro request alerts, bro-nation receipts, and BroCoin mint notifications.</p>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════
+     SECTION 2: DATA USE
+     Why we collect it & what we do with your data. Purpose-driven. No surprises.
+     App features, payments, fraud prevention, notifications, aggregated analytics. ═════════════════════════════════════════════════════════════════════════════════ -->
+<h2>2. How We Use Your Information</h2>
+<ul>
+  <li>Provide, maintain, and improve the app's features</li>
+  <li>Process in-app purchases and peer-to-peer Bro Bucks transfers</li>
+  <li>Enforce one-account-per-person limits and prevent abuse</li>
+  <li>Send push notifications you have opted into</li>
+  <li>Generate aggregated, anonymized platform statistics (total transactions, treasury reserve)</li>
+</ul>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════
+     SECTION 3: VISIBILITY & SHARING
+     Who sees what. Your profile is PUBLIC to other users (intentional). Your
+     bro list, wallet, and Bro Coin balance? PRIVATE forever. We don't sell your
+     data. Third-party integrations (Firebase, Google, Facebook) bound by their terms. ═════════════════════════════════════════════════════════════════════════════════ -->
+<h2>3. Information Sharing</h2>
+
+<p>We do <strong>not</strong> sell, rent, or share your personal information with third-party advertisers. Information is shared only in these limited circumstances:</p>
+<ul>
+  <li><strong>Other Users.</strong> Your display name, profile image, workplace/school, and "interesting thing" are visible to authenticated users. Your bro list is <em>never</em> visible to other users. BroCoin balances are private.</li>
+  <li><strong>Service Providers.</strong> We use Firebase (Google Cloud) for authentication, database, and file storage. Data is processed under Google's data processing terms.</li>
+  <li><strong>Legal Requirements.</strong> We may disclose information if required by law, regulation, or valid legal process.</li>
+</ul>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════
+     SECTION 4: RETENTION & DELETION
+     How long we keep your stuff. Account data stays while you're active.
+     Delete your account anytime — profile gone in 30 days. Ledger entries
+     are anonymized & kept for transparency (no way to trace back to you). ═════════════════════════════════════════════════════════════════════════════════ -->
+<h2>4. Data Retention</h2>
+
+<p>Your account data is retained as long as your account is active. You may request deletion of your account and associated data by contacting us at the email below. Upon deletion, profile data is removed within 30 days; anonymized ledger entries and aggregate statistics are retained.</p>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════
+     SECTION 5: SECURITY ARCHITECTURE
+     How we protect your data. Firebase built-in hardening (auth, Firestore rules,
+     Storage rules). HTTPS/TLS for all comms. Image validation. Just works. ═════════════════════════════════════════════════════════════════════════════════ -->
+<h2>5. Security</h2>
+
+<p>We use Firebase Authentication, Firestore security rules, and Cloud Storage security rules to protect your data. All communication between the app and our servers uses HTTPS/TLS encryption. Profile images are limited to 5 MB and validated as image files before upload.</p>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════
+     SECTION 6: COPPA & YOUTH PROTECTIONS
+     13+ only. No exceptions. If we find out a child is using the app, we delete
+     their data immediatly. Parents: if you're concerned, email us. ═════════════════════════════════════════════════════════════════════════════════ -->
+<h2>6. Children's Privacy</h2>
+
+<p>Bro is not directed at children under 13. We do not knowingly collect personal information from children under 13. If you believe a child has provided us information, please contact us and we will delete it promptly.</p>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════
+     SECTION 7: USER CONTROL & AGENCY
+     You own your data. Update, remove, or nuke it whenever. Notifications off?
+     Done. Delete your account? Poof — gone. No friction. Just empowerment. ═════════════════════════════════════════════════════════════════════════════════ -->
+<h2>7. Your Choices</h2>
+<ul>
+  <li><strong>Profile.</strong> You can update or remove your profile image, workplace/school, and "interesting thing" at any time.</li>
+  <li><strong>Notifications.</strong> You can disable push notifications through your device settings.</li>
+  <li><strong>Account Deletion.</strong> You can request full account deletion by emailing us.</li>
+</ul>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════
+     SECTION 8: POLICY UPDATES
+     We might change this. If it's big, we'll tell you. Keep using the app
+     = you accept the changes. That's how the web works. ═════════════════════════════════════════════════════════════════════════════════ -->
+<h2>8. Changes to This Policy</h2>
+
+<p>We may update this policy from time to time. If we make material changes, we will notify you through the app or by email. Continued use of Bro after changes constitutes acceptance of the updated policy.</p>
+
+<h2>9. Contact Us</h2>
+
+<p>Questions or requests? Email us at <a href="mailto:privacy@broapp.com">privacy@broapp.com</a>.</p>
+
+</body>
+</html>
