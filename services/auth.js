@@ -1,21 +1,21 @@
 /**
- * auth.js - Firebase Authentication Service
+ * auth.js — Firebase Authentication Service
  * ───────────────────────────────────────────────────────────────────────────
  * Real Firebase Auth implementation using FREE tier features only:
  *
- * 1. EMAIL + PASSWORD - Standard sign-up/sign-in with email verification
- * 2. GOOGLE SIGN-IN - via expo-auth-session (Firebase free tier)
- * 3. FACEBOOK SIGN-IN - via expo-auth-session (Firebase free tier)
- * 4. ONE ACCOUNT PER PERSON - Enforced via:
+ * 1. EMAIL + PASSWORD — Standard sign-up/sign-in with email verification
+ * 2. GOOGLE SIGN-IN — via expo-auth-session (Firebase free tier)
+ * 3. FACEBOOK SIGN-IN — via expo-auth-session (Firebase free tier)
+ * 4. ONE ACCOUNT PER PERSON — Enforced via:
  *    - Firebase email uniqueness (built-in)
  *    - OAuth provider linking (1 Google = 1 account)
  *    - Device fingerprint stored in Firestore (flags multi-account)
- * 5. SMART CAPTCHA - Client-side behavior analysis + proof-of-work
- * 6. RATE LIMITING - Client-side with Firestore timestamp tracking
- * 7. EMAIL VERIFICATION - Firebase sendEmailVerification()
+ * 5. SMART CAPTCHA — Client-side behavior analysis + proof-of-work
+ * 6. RATE LIMITING — Client-side with Firestore timestamp tracking
+ * 7. EMAIL VERIFICATION — Firebase sendEmailVerification()
  *
- * NO SAML/OIDC - those require Firebase Blaze plan.
- * NO phone auth - requires Blaze plan for SMS.
+ * NO SAML/OIDC — those require Firebase Blaze plan.
+ * NO phone auth — requires Blaze plan for SMS.
  * All features work on Spark (free) plan with 50K MAU.
  */
 
@@ -53,7 +53,7 @@ export const AUTH_CONFIG = {
   lockoutDurationMs:     15 * 60 * 1000,
   backoffBaseMs:         1000,
 
-  // OAuth provider configs - replace with your real IDs before submission
+  // OAuth provider configs — replace with your real IDs before submission
   google: {
     iosClientId:     "YOUR_GOOGLE_IOS_CLIENT_ID.apps.googleusercontent.com",
     androidClientId: "YOUR_GOOGLE_ANDROID_CLIENT_ID.apps.googleusercontent.com",
@@ -94,7 +94,7 @@ export async function getDeviceFingerprint() {
       deviceId || "unknown",
     ].join("|");
 
-    // SHA256 digest creates tamper-proof fingerprint - can't fake this locally.
+    // SHA256 digest creates tamper-proof fingerprint — can't fake this locally.
     const hash = await Crypto.digestStringAsync(
       Crypto.CryptoDigestAlgorithm.SHA256,
       components
@@ -109,7 +109,7 @@ export async function getDeviceFingerprint() {
 
 // ── Smart CAPTCHA (client-side behavior analysis) ────────────────────────
 export function recordBehaviorEvent(eventType, metadata = {}) {
-  // Build behavior timeline. Human users tap, scroll, pause. Bots fire instantly - we catch it.
+  // Build behavior timeline. Human users tap, scroll, pause. Bots fire instantly — we catch it.
   _behaviorEvents.push({
     type: eventType,
     ts:   Date.now(),
@@ -133,7 +133,7 @@ export function computeBehaviorScore() {
   // Humans engage different ways; pure bots follow one script.
   const uniqueTypes   = new Set(_behaviorEvents.map((e) => e.type)).size;
   const diversityScore = Math.min(uniqueTypes / 3, 1.0);
-  // Real users don't rush - session completeon takes time.
+  // Real users don't rush — session completeon takes time.
   const totalTimeMs    = _behaviorEvents[_behaviorEvents.length - 1].ts - _behaviorEvents[0].ts;
   const timeScore      = Math.min(totalTimeMs / 3000, 1.0);
 
@@ -152,19 +152,19 @@ export function generateProofOfWorkChallenge() {
 
 export async function solveProofOfWork(challenge, difficulty) {
   // Proof-of-work loop: compute hashes until we hit the target (N leading zeros).
-  // Bots can't buy their way past this - they have to work for authenticity.
+  // Bots can't buy their way past this — they have to work for authenticity.
   const target = "0".repeat(difficulty);
   let nonce = 0;
   let hash;
   do {
     const input = challenge + nonce;
-    // Each iteration is a fresh hash computation - no shortcuts.
+    // Each iteration is a fresh hash computation — no shortcuts.
     hash = await Crypto.digestStringAsync(
       Crypto.CryptoDigestAlgorithm.SHA256,
       input
     );
     nonce++;
-    // Safety valve: don't loop forever on mobile - 500k iterations max.
+    // Safety valve: don't loop forever on mobile — 500k iterations max.
     if (nonce > 500000) break;
   } while (!hash.startsWith(target));
 
@@ -183,7 +183,7 @@ function checkRateLimit() {
     const remainMin = Math.ceil((_lockoutUntil - Date.now()) / 60000);
     return { blocked: true, message: `Account locked. Try again in ${remainMin} min.` };
   }
-  // Lockout expired - clean slate.
+  // Lockout expired — clean slate.
   if (_lockoutUntil && Date.now() >= _lockoutUntil) {
     _lockoutUntil  = null;
     _loginAttempts = 0;
@@ -192,7 +192,7 @@ function checkRateLimit() {
 }
 
 function recordFailedAttempt() {
-  // Increment counter. Escalate punishment with exponentiel backoff - 1s, 2s, 4s, 8s...
+  // Increment counter. Escalate punishment with exponentiel backoff — 1s, 2s, 4s, 8s...
   _loginAttempts++;
   if (_loginAttempts >= AUTH_CONFIG.maxLoginAttemptsBeforeLock) {
     _lockoutUntil = Date.now() + AUTH_CONFIG.lockoutDurationMs;
@@ -293,7 +293,7 @@ export async function signInWithEmail(email, password) {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Update last active timestamp - powers activity boosts for BroCoin odds.
+    // Update last active timestamp — powers activity boosts for BroCoin odds.
     await setDoc(doc(db, COLLECTIONS.USERS, user.uid), {
       lastActiveAt: serverTimestamp(),
     }, { merge: true });
@@ -374,12 +374,12 @@ export async function signInWithGoogle(idToken) {
     const user = userCredential.user;
     const isNew = userCredential._tokenResponse?.isNewUser || false;
 
-    // Capture device fingerprint on OAuth credential exchange - prevents account takeover.
+    // Capture device fingerprint on OAuth credential exchange — prevents account takeover.
     const fingerprint = await getDeviceFingerprint();
     const profileDoc = await getDoc(doc(db, COLLECTIONS.USERS, user.uid));
 
     if (!profileDoc.exists()) {
-      // New user - create profile with starter balance and device lock.
+      // New user — create profile with starter balance and device lock.
       await setDoc(doc(db, COLLECTIONS.USERS, user.uid), {
         uid:             user.uid,
         email:           user.email,
@@ -513,7 +513,7 @@ export async function checkAccountUniqueness({ email, deviceFingerprint }) {
  * Returns an unsubscribe function.
  */
 export function onAuthStateChange(callback) {
-  // Real-time listener - fires on login, logout, refresh. Keep UI in sync with backend state.
+  // Real-time listener — fires on login, logout, refresh. Keep UI in sync with backend state.
   return onAuthStateChanged(auth, (user) => {
     if (user) {
       callback({
@@ -554,7 +554,7 @@ export function isAuthenticated() {
 export async function signOut() {
   try {
     await firebaseSignOut(auth);
-    // Reset all client-side security state - clean exit.
+    // Reset all client-side security state — clean exit.
     _loginAttempts  = 0;
     _lockoutUntil   = null;
     _behaviorEvents = [];

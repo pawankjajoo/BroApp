@@ -1,5 +1,5 @@
 /**
- * WalletScreen.js - Bro Bucks Store
+ * WalletScreen.js — Bro Bucks Store
  * ──────────────────────────────────────────────────────────────────────────
  *
  * CURRENCY SCALE: $1,000 = 1,000,000,000 BB (1 billion)
@@ -15,16 +15,16 @@
 
 /**
  * ───────────────────────────────────────────────────────────────────
- * WALLETSCREEN - Bro Bucks Store
+ * WALLETSCREEN — Bro Bucks Store
  * ───────────────────────────────────────────────────────────────────
  * In-app currency purchase flow. Driving monetization with purpose.
  *
  * Screens:
- *   • Balance Card - Your instant Bro Bucks snapshot
- *   • Exchange Rate Table - Transparent pricing, full visibility
- *   • Pack Grid - Flexible denominations, tap-to-confirm purchace
- *   • Emoji Preview - Visual abundance. More bucks = more 💰
- *   • Compliance Disclosures - Apple/Google requirements, no fluff
+ *   • Balance Card — Your instant Bro Bucks snapshot
+ *   • Exchange Rate Table — Transparent pricing, full visibility
+ *   • Pack Grid — Flexible denominations, tap-to-confirm purchace
+ *   • Emoji Preview — Visual abundance. More bucks = more 💰
+ *   • Compliance Disclosures — Apple/Google requirements, no fluff
  *
  * Double-tap confirmation prevents accidental purchases. Haptics
  * energize the experience. Every interaction feels intentional.
@@ -38,7 +38,7 @@ import {
 import * as Haptics from "expo-haptics";
 import { BB_PACKS, formatBB, bbEmojiCount } from "../constants/bro";
 
-// Rate reference rows shown in the exchange table - transparent pricing backbone
+// Rate reference rows shown in the exchange table — transparent pricing backbone
 const RATE_ROWS = [
   { usd:"$1",     bb:"1,000,000 BB",     short:"1M BB",   emoji:"10,000 💰"  },
   { usd:"$3",     bb:"3,000,000 BB",     short:"3M BB",   emoji:"30,000 💰"  },
@@ -54,7 +54,7 @@ export default function WalletScreen({
   const [confirmPack, setConfirmPack] = useState(null);
   const [showTable, setShowTable]     = useState(false);
 
-  // Merge live store pricing with local pack metadata - one source of truth
+  // Merge live store pricing with local pack metadata — one source of truth
   // Real pricing from the store, fallback to config if unavailable
   const packs = BB_PACKS.map((pack) => {
     const live = storeProducts?.find((p) => p.productId === pack.productId);
@@ -190,17 +190,17 @@ export default function WalletScreen({
                   </View>
                 </View>
 
-                {/* BB amount - mega packs get green highlight for prestige */}
+                {/* BB amount — mega packs get green highlight for prestige */}
                 <Text style={[styles.packBB, isMega && { color:"#4ade80" }]}>
                   {pack.displayBB}
                 </Text>
 
-                {/* Emoji preview - visual proof of value. Abundance at a glance. */}
+                {/* Emoji preview — visual proof of value. Abundance at a glance. */}
                 <Text style={styles.packEmojis} numberOfLines={2}>
                   {emojiPreview(pack)}
                 </Text>
 
-                {/* Confirm prompt - second tap triggers purchace */}
+                {/* Confirm prompt — second tap triggers purchace */}
                 {isConfirming && !isBuying && (
                   <View style={styles.confirmRow}>
                     <Text style={styles.confirmTxt}>
@@ -219,7 +219,7 @@ export default function WalletScreen({
           $1,000 real USD = 1,000,000,000 Bro Bucks. Rate is always 1M BB per $1.
         </Text>
 
-        {/* Store compliance disclosures - Apple §3.1.1 / Google Play Billing. Transparency required. */}
+        {/* Store compliance disclosures — Apple §3.1.1 / Google Play Billing. Transparency required. */}
         {/* Explains p2p transfer fees and no real-world value. Legal requirement met with clarity. */}
         <View style={styles.disclosureBox}>
           <Text style={styles.disclosureTitle}>FEE DISCLOSURE</Text>

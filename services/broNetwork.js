@@ -1,5 +1,5 @@
 /**
- * broNetwork.js - Bro Recommendation Engine (Firebase-backed)
+ * broNetwork.js — Bro Recommendation Engine (Firebase-backed)
  * ───────────────────────────────────────────────────────────────────────────
  * Computes recommended bros based on 2nd and 3rd degree connections.
  *
@@ -35,7 +35,7 @@ export async function getRecommendedBros(userId, maxDegree = 3) {
       return _computeRecommendations(userId, graph, maxDegree);
     }
   } catch (e) {
-    // Firestore unavailable - use mock. BFS traversal still works.
+    // Firestore unavailable — use mock. BFS traversal still works.
   }
 
   // Fallback: use mock graph from constants. Never show direct list of anyone's bros.
@@ -51,7 +51,7 @@ async function _buildGraphFromFirestore(userId) {
   const visited = new Set();
   let currentLayer = [userId];
 
-  // BFS traversal - layer by layer, 3 degrees max to avoid explosiv queries.
+  // BFS traversal — layer by layer, 3 degrees max to avoid explosiv queries.
   for (let degree = 0; degree < 3; degree++) {
     const nextLayer = [];
     for (const uid of currentLayer) {
@@ -83,13 +83,13 @@ async function _buildGraphFromFirestore(userId) {
  * Compute recommendations from a graph using BFS.
  */
 function _computeRecommendations(userId, graph, maxDegree) {
-  // Build my direct connections. This stays private - never exposed publicly.
+  // Build my direct connections. This stays private — never exposed publicly.
   const directSet = new Set(graph[userId] || []);
   const visited   = new Set([userId, ...directSet]);
   const results   = [];
   let currentLayer = [...directSet];
 
-  // BFS layers 2 and 3 - friends of friends, then friends of those.
+  // BFS layers 2 and 3 — friends of friends, then friends of those.
   for (let degree = 2; degree <= maxDegree; degree++) {
     const nextLayer = [];
 
@@ -99,7 +99,7 @@ function _computeRecommendations(userId, graph, maxDegree) {
         if (visited.has(candidateId)) continue;
         visited.add(candidateId);
 
-        // Count mutual connections - signals compatibility & trust.
+        // Count mutual connections — signals compatibility & trust.
         const candidateBros = new Set(graph[candidateId] || []);
         let mutualCount = 0;
         for (const myBroId of directSet) {

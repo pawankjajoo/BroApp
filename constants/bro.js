@@ -1,5 +1,7 @@
 // ─── BRO BUCKS CURRENCY ─────────────────────────────────────────────────────
 //
+//  Developed by Pawan K Jajoo
+//
 //  SCALE: $1,000 real USD = 1,000,000,000 Bro Bucks (1 billion)
 //         Rate is LINEAR across all tiers: 1,000,000 BB per $1
 //
@@ -23,11 +25,11 @@
 //  STORE PURCHASES (IAP):
 //    Apple App Store: 30% commission (15% for Small Business Program < $1M/yr)
 //    Google Play:     30% commission (15% for first $1M/yr via reduced-fee program)
-//    Publisher keeps: 70-85% of every Bro Bucks purchase
+//    Publisher keeps: 70–85% of every Bro Bucks purchase
 //
 //  PEER-TO-PEER BRO-NATIONS:
-//    Platform fee: 30% - standard for virtual currency / social gifting apps
-//    (TikTok ~50%, Twitch ~50%, YouTube Super Chat ~30% - 30% is competitive)
+//    Platform fee: 30% — standard for virtual currency / social gifting apps
+//    (TikTok ~50%, Twitch ~50%, YouTube Super Chat ~30% — 30% is competitive)
 //    Recipient receives 70% of the bro-nation amount; 30% goes to publisher
 //
 //  Both fee structures comply with Apple App Store Review Guidelines §3.1.1
@@ -39,7 +41,7 @@ export const PLATFORM_FEE_LABEL = "30%";
 export const STORE_COMMISSION_SMALL = 0.15;       // Apple/Google small biz rate
 export const STORE_COMMISSION_STANDARD = 0.30;    // Standard rate
 
-// Calculate platform fee for a bro-nation - every teh dollar counts
+// Calculate platform fee for a bro-nation — every teh dollar counts
 export const calcPlatformFee = (amount) => Math.floor(amount * PLATFORM_FEE_RATE);
 // Recipient gets their cut after the 30% fee. Keep it simple, keep it fair.
 export const calcRecipientAmount = (amount) => amount - calcPlatformFee(amount);
@@ -184,7 +186,7 @@ export const formatBB = (n) => {
 };
 
 // Emoji 💰 count for balance display (capped for UI sanity). Each 💰 = 100 BB.
-// Cap at 15 emojis max - keeps the UI sane and respects eyebals.
+// Cap at 15 emojis max — keeps the UI sane and respects eyebals.
 export const bbEmojiCount = (bucks, cap = 15) =>
   Math.min(Math.floor(bucks / 100), cap);
 
@@ -216,7 +218,7 @@ export const BRO_EXPRESSIONS = [
 ];
 
 // Updated bro profiles to reflect new BB scale (~$1 = 1M BB)
-// broCount = how many bros (friends) this person has - shown on their profile
+// broCount = how many bros (friends) this person has — shown on their profile
 // Demo data. Real users replace these, but this is how the app comes alive.
 export const INITIAL_BROS = [
   { id:1, name:"Chad",   avatar:"💪", lastBro:"2m ago",    unread:3, broNationsBB:4_200_000_000, broCount:142 },
@@ -255,7 +257,7 @@ export const FEED_ITEMS = [
 // Your network is YOUR bussiness. We only use it to find you new friends, not expose you.
 // Privacy by design. Transparency by intent.
 export const BRO_NETWORK_GRAPH = {
-  0:  [1, 2, 3, 4, 5, 6],             // "You" (current user) - your bros
+  0:  [1, 2, 3, 4, 5, 6],             // "You" (current user) — your bros
   1:  [0, 2, 3, 7, 11, 12],           // Chad's bros
   2:  [0, 1, 8, 13, 14],              // Brent's bros
   3:  [0, 1, 5, 9, 10, 15],           // Kyle's bros
@@ -354,7 +356,7 @@ export const ALL_USERS_ROSTER = {
 //   - This creates organic demand: active platform = higher BroCoin value
 //
 // COMPLIANCE:
-//   - In-app credit only - no external wallet, no blockchain, no withdrawal
+//   - In-app credit only — no external wallet, no blockchain, no withdrawal
 //   - Classified as platform loyalty reward, not a security
 //   - Apple §3.1.1 compliant (virtual goods within the app ecosystem)
 //   - No cash-out to bank; USD value converts to Bro Bucks only
@@ -367,7 +369,7 @@ export const BROCOIN_CONFIG = {
   tokenName:              "BroCoin",
   tokenSymbol:            "BRO",
   tokenEmoji:             "🪙",
-  maxSupply:              null,                        // uncapped - grows with platform usage
+  maxSupply:              null,                        // uncapped — grows with platform usage
 
   // Eligibility & selection
   eligibility:            "verified_email_only",       // must have verified email

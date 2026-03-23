@@ -1,6 +1,6 @@
 /**
  * ───────────────────────────────────────────────────────────────────────────
- * PROFILESCREEN - Bro-file
+ * PROFILESCREEN — Bro-file
  * ───────────────────────────────────────────────────────────────────────────
  * Intentionally minimal profile by design. Elegant simplicity.
  *
@@ -64,7 +64,7 @@ import {
 import { getRecommendedBros } from "../services/broNetwork";
 import { getMyBroCoins, getGlobalStats, getMintProgress, getBroCoinPriceUSD } from "../services/broCoin";
 
-// ── Feature grid items - 8 core experiences. Icons + text. Tappable. ──
+// ── Feature grid items – 8 core experiences. Icons + text. Tappable. ──
 const BRO_FEATURES = [
   { key:"bro2bro",      icon:"↔️", title:"Bro 2 Bro",      subtitle:"Direct one-on-one bro"  },
   { key:"brocast",      icon:"📡", title:"Bro-cast",        subtitle:"Broadcast to all bros"   },
@@ -93,10 +93,10 @@ export default function ProfileScreen({
   const [showRecommended, setShowRecommended] = useState(false);
 
   // ── Recommended bros (2nd & 3rd degree connections) ────────────────────────
-  // Grow your network. Privacy preserved - others can't see your bro list.
+  // Grow your network. Privacy preserved — others can't see your bro list.
   const recommendedBros = useMemo(() => getRecommendedBros(0, 3), []);
 
-  // ── BroCoin stats (PRIVATE - only shown to the owner) ───────────────────
+  // ── BroCoin stats (PRIVATE — only shown to the owner) ───────────────────
   // Never displayed on your public profile. Only you see this.
   const myBroCoins   = getMyBroCoins(0);
   const globalStats  = getGlobalStats();
@@ -110,7 +110,7 @@ export default function ProfileScreen({
   const [editInteresting, setEditInteresting] = useState(userProfile.interestingThing || "");
   const [verificationSent, setVerificationSent] = useState(false);
 
-  // ── Image picker - Library or camera. Square crop. Low quality save. ──
+  // ── Image picker — Library or camera. Square crop. Low quality save. ──
   // Tap image to launch options. Replace or remove anytime.
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -157,7 +157,7 @@ export default function ProfileScreen({
     ]);
   };
 
-  // ── Verification flow - Email domain validation. Build trust. ──
+  // ── Verification flow – Email domain validation. Build trust. ──
   // Ensures legit .edu or real work domains. No personal emails for work.
   const handleSendVerification = () => {
     if (!editVerifyEmail) {
@@ -199,7 +199,7 @@ export default function ProfileScreen({
   // ── Profile save handler. Persists all three fields. Simple. ──
   // Saves one interesting thing + affiliation. Validates existing verification.
   const handleSaveProfile = () => {
-    // Save interesting thing - slice ensures max length
+    // Save interesting thing — slice ensures max length
     onUpdateProfile({ interestingThing: editInteresting.slice(0, PROFILE_MAX_INTERESTING_LENGTH) });
     // Save affiliation (unverified if not yet verified)
     if (editAffType && editAffName) {
@@ -237,7 +237,7 @@ export default function ProfileScreen({
           data={recommendedBros}
           keyExtractor={(item) => String(item.id)}
           showsVerticalScrollIndicator={false}
-          {/* Privacy notice - transparency about algorithm. No surveillance. */}
+          {/* Privacy notice — transparency about algorithm. No surveillance. */}
           ListHeaderComponent={
             <Text style={styles.recPrivacyNote}>
               Recommendations based on your network. You cannot see who others are bros with.
@@ -272,7 +272,7 @@ export default function ProfileScreen({
           {/* Privacy reinforcement. Your list stays private. */}
           ListFooterComponent={
             <Text style={styles.recFooterNote}>
-              Bro lists are private. You'll never see who someone else is bros with - only recommendations based on shared connections.
+              Bro lists are private. You'll never see who someone else is bros with — only recommendations based on shared connections.
             </Text>
           }
         />
@@ -373,7 +373,7 @@ export default function ProfileScreen({
               <Text style={styles.editSectionTitle}>WHERE YOU AT, BRO?</Text>
               <Text style={styles.editDesc}>Pick one: work or school. We verify so bros know you're legit.</Text>
 
-              {/* Toggle buttons - work or school affiliation selection. */}
+              {/* Toggle buttons — work or school affiliation selection. */}
               <View style={styles.affToggle}>
                 <TouchableOpacity
                   style={[styles.affBtn, editAffType === "work" && styles.affBtnActive]}
@@ -457,7 +457,7 @@ export default function ProfileScreen({
                 numberOfLines={3}
                 textAlignVertical="top"
               />
-              {/* Character counter - shows usage. Transparency. */}
+              {/* Character counter — shows usage. Transparency. */}
               <Text style={styles.charCount}>
                 {editInteresting.length}/{PROFILE_MAX_INTERESTING_LENGTH}
               </Text>
@@ -479,7 +479,7 @@ export default function ProfileScreen({
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Hero / Avatar - Your face. Tap to change. */}
+        {/* Hero / Avatar — Your face. Tap to change. */}
         <View style={styles.heroSection}>
           {/* Image or fist emoji placeholder. Camera badge visible. */}
           <TouchableOpacity onPress={showImageOptions} activeOpacity={0.8}>
@@ -498,7 +498,7 @@ export default function ProfileScreen({
           <Text style={styles.profileName}>{userProfile.displayName}</Text>
           <Text style={styles.profileHandle}>{userProfile.handle} · Est. 2014</Text>
 
-          {/* Affiliation badge - Shows work/school with verification checkmark if verified. */}
+          {/* Affiliation badge — Shows work/school with verification checkmark if verified. */}
           {userProfile.affiliation?.name && (
             <View style={styles.affBadgeRow}>
               <Text style={styles.affBadgeIcon}>
@@ -511,12 +511,12 @@ export default function ProfileScreen({
             </View>
           )}
 
-          {/* Interesting thing - One quote from the profile. Italic emphasis. */}
+          {/* Interesting thing — One quote from the profile. Italic emphasis. */}
           {userProfile.interestingThing ? (
             <Text style={styles.interestingThing}>"{userProfile.interestingThing}"</Text>
           ) : null}
 
-          {/* Edit button - Taps to edit profile. Easy access. */}
+          {/* Edit button — Taps to edit profile. Easy access. */}
           <TouchableOpacity
             style={styles.editProfileBtn}
             onPress={() => {
@@ -532,27 +532,27 @@ export default function ProfileScreen({
           </TouchableOpacity>
         </View>
 
-        {/* Stats row - Three key numbers. BroCoin not shown publicly (private). */}
+        {/* Stats row — Three key numbers. BroCoin not shown publicly (private). */}
         {/* Your network size + engagement + spending power. Transparent metrics. */}
         <View style={styles.statsRow}>
-          {/* Bros count - your connection size */}
+          {/* Bros count — your connection size */}
           <View style={styles.stat}>
             <Text style={styles.statN}>{bros?.length || 6}</Text>
             <Text style={styles.statL}>BROS</Text>
           </View>
-          {/* Bros sent - your generosity tracked */}
+          {/* Bros sent — your generosity tracked */}
           <View style={[styles.stat, styles.statBorder]}>
             <Text style={styles.statN}>{broCount.toLocaleString()}</Text>
             <Text style={styles.statL}>BROS SENT</Text>
           </View>
-          {/* Bro Bucks - your spending balance (non-private display context) */}
+          {/* Bro Bucks — your spending balance (non-private display context) */}
           <View style={[styles.stat, styles.statBorder]}>
             <Text style={[styles.statN, { color:"#ffe066", fontSize:18 }]}>{formatBB(broBucks)}</Text>
             <Text style={styles.statL}>BRO BUCKS</Text>
           </View>
         </View>
 
-        {/* Recommended bros preview - Teaser card. Tap for full list. */}
+        {/* Recommended bros preview — Teaser card. Tap for full list. */}
         {/* Shows avatars of 2nd & 3rd degree connections. Privacy-safe recommendations. */}
         <TouchableOpacity
           style={styles.recPreview}
@@ -579,7 +579,7 @@ export default function ProfileScreen({
           <Text style={styles.recPreviewArrow}>›</Text>
         </TouchableOpacity>
 
-        {/* BroCoin wallet card - PRIVATE: only you see your balance */}
+        {/* BroCoin wallet card — PRIVATE: only you see your balance */}
         {/* Never shown on your public profile. Treasury-backed value. Tap for hub. */}
         <TouchableOpacity
           style={styles.broCoinCard}
@@ -612,7 +612,7 @@ export default function ProfileScreen({
           </View>
         </TouchableOpacity>
 
-        {/* Feature grid - 8 features, 2 columns. Icons + titles + descriptions. */}
+        {/* Feature grid — 8 features, 2 columns. Icons + titles + descriptions. */}
         {/* Each card tappable. Routes to feature or modal. Wallet shows balance. */}
         <FlatList
           data={BRO_FEATURES}
@@ -653,7 +653,7 @@ export default function ProfileScreen({
           )}
         />
 
-        {/* Sign Out - Destructive action. Requires confirmation dialog. Bottom placement. */}
+        {/* Sign Out — Destructive action. Requires confirmation dialog. Bottom placement. */}
         {onSignOut && (
           <TouchableOpacity
             style={styles.signOutBtn}

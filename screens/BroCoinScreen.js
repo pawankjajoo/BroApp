@@ -1,20 +1,20 @@
 /**
  * ───────────────────────────────────────────────────────────────────────────
- * BROCOINSCREEN - BroCoin Hub
+ * BROCOINSCREEN — BroCoin Hub
  * ───────────────────────────────────────────────────────────────────────────
  * Platform rewards. Privacy-first design. Four tabs: wallet, ledger,
  * transparency, trade.
  *
- * Tab 1: WALLET - Private balance + live price + mint progress.
+ * Tab 1: WALLET — Private balance + live price + mint progress.
  *        Your BroCoins are never shown publicly.
  *
- * Tab 2: LEDGER - Anonymized public mint history. Every drop recorded,
+ * Tab 2: LEDGER — Anonymized public mint history. Every drop recorded,
  *        no identities revealed. Salted hashes. Full accountability.
  *
- * Tab 3: HOW IT WORKS - The algorithm, odds, treasury model.
+ * Tab 3: HOW IT WORKS — The algorithm, odds, treasury model.
  *        Why price moves. How to boost your chances.
  *
- * Tab 4: TRADE - One-way BRO → BB conversion. Mint-only earning.
+ * Tab 4: TRADE — One-way BRO → BB conversion. Mint-only earning.
  *        Cannot buy BroCoins. Can only earn them randomly.
  *
  * Treasury pricing: Price = Reserve ÷ Total Minted.
@@ -54,7 +54,7 @@ export default function BroCoinScreen({ broBucks, onTradeBB, onBack, showToast }
   const priceBB      = getBroCoinPriceBB();
   const priceUSD     = getBroCoinPriceUSD();
 
-  // ── Trade handler - One-way conversion. BRO → BB only. No reversal. ──
+  // ── Trade handler — One-way conversion. BRO → BB only. No reversal. ──
   // Validates amount, executes trade, updates balance, shows confirmation.
   const handleTrade = () => {
     const amount = parseInt(tradeAmount, 10);
@@ -74,7 +74,7 @@ export default function BroCoinScreen({ broBucks, onTradeBB, onBack, showToast }
 
   return (
     <SafeAreaView style={s.container}>
-      {/* Header - Back, title, private balance display. Quick exit. */}
+      {/* Header — Back, title, private balance display. Quick exit. */}
       <View style={s.header}>
         <TouchableOpacity onPress={onBack}>
           <Text style={s.back}>‹</Text>
@@ -86,7 +86,7 @@ export default function BroCoinScreen({ broBucks, onTradeBB, onBack, showToast }
         <Text style={s.headerBalance}>{myCoins} 🪙</Text>
       </View>
 
-      {/* Tab bar - Four equal sections. Tap to navigate. Private, transparent, tradeable. */}
+      {/* Tab bar — Four equal sections. Tap to navigate. Private, transparent, tradeable. */}
       <View style={s.tabBar}>
         {TABS.map((t) => (
           <TouchableOpacity
@@ -103,7 +103,7 @@ export default function BroCoinScreen({ broBucks, onTradeBB, onBack, showToast }
       {/* Your private treasury. Balance, price, mint progress. Never public. */}
       {activeTab === "wallet" && (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30 }}>
-          {/* Balance card - Private BroCoins + USD valuation. Locked to you. */}
+          {/* Balance card — Private BroCoins + USD valuation. Locked to you. */}
           <View style={s.walletCard}>
             <Text style={s.walletLabel}>YOUR BROCOIN BALANCE</Text>
             <Text style={s.walletAmount}>{myCoins} {BROCOIN_CONFIG.tokenSymbol}</Text>
@@ -113,7 +113,7 @@ export default function BroCoinScreen({ broBucks, onTradeBB, onBack, showToast }
             <Text style={s.walletPrivacy}>🔒 Only you can see this. BroCoin balances are never shown on profiles.</Text>
           </View>
 
-          {/* Live price - Treasury-backed. Price = Reserve ÷ Total Minted. Transparant. */}
+          {/* Live price — Treasury-backed. Price = Reserve ÷ Total Minted. Transparant. */}
           <View style={s.priceCard}>
             <Text style={s.priceLabel}>LIVE BROCOIN PRICE</Text>
             <View style={s.priceRow}>
@@ -123,7 +123,7 @@ export default function BroCoinScreen({ broBucks, onTradeBB, onBack, showToast }
             <Text style={s.priceNote}>Price = Treasury Reserve ÷ Total Minted. More platform activity = higher value.</Text>
           </View>
 
-          {/* Mint progress - Count toward next drop. Odds improving with platform growth. */}
+          {/* Mint progress — Count toward next drop. Odds improving with platform growth. */}
           {/* Shows percentage, BB needed, eligible users. Real-time tracking. */}
           <View style={s.progressCard}>
             <Text style={s.progressLabel}>NEXT BROCOIN DROP</Text>
@@ -150,7 +150,7 @@ export default function BroCoinScreen({ broBucks, onTradeBB, onBack, showToast }
             <View style={s.ledgerHeader}>
               <Text style={s.ledgerHeaderTitle}>PUBLIC MINT LEDGER</Text>
               <Text style={s.ledgerHeaderDesc}>
-                Every BroCoin mint is recorded here for full transparency. Recipient identities are anonymized with salted hashes - no entry can be traced back to a specific user profile.
+                Every BroCoin mint is recorded here for full transparency. Recipient identities are anonymized with salted hashes — no entry can be traced back to a specific user profile.
               </Text>
             </View>
           }
@@ -173,16 +173,16 @@ export default function BroCoinScreen({ broBucks, onTradeBB, onBack, showToast }
                 </Text>
                 {/* Odds range shows weight distribution. No surprises. */}
                 <Text style={s.ledgerOdds}>
-                  Odds range: {item.weightSnapshot.minOdds} - {item.weightSnapshot.maxOdds}
+                  Odds range: {item.weightSnapshot.minOdds} – {item.weightSnapshot.maxOdds}
                 </Text>
               </View>
             </View>
           )}
-          {/* Empty state - No mints yet. Keep platform activity going. */}
+          {/* Empty state — No mints yet. Keep platform activity going. */}
           ListEmptyComponent={
             <View style={s.emptyState}>
               <Text style={s.emptyEmoji}>🪙</Text>
-              <Text style={s.emptyTxt}>No BroCoins minted yet. Keep bro-ing - first drop coming soon!</Text>
+              <Text style={s.emptyTxt}>No BroCoins minted yet. Keep bro-ing — first drop coming soon!</Text>
             </View>
           }
           {/* Privacy guarantee reinforced. Salted hashes with rotating salt. Unhackable. */}
@@ -199,7 +199,7 @@ export default function BroCoinScreen({ broBucks, onTradeBB, onBack, showToast }
       {/* Algorithm, odds, treasury, privacy guarantees, trading rules. Full disclosure. */}
       {activeTab === "transparency" && (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30 }}>
-          {/* THE ALGORITHM - Mint trigger and distribution logic. */}
+          {/* THE ALGORITHM — Mint trigger and distribution logic. */}
           <View style={s.transSection}>
             <Text style={s.transSectionTitle}>THE ALGORITHM</Text>
             <Text style={s.transDesc}>
@@ -207,7 +207,7 @@ export default function BroCoinScreen({ broBucks, onTradeBB, onBack, showToast }
             </Text>
           </View>
 
-          {/* SELECTION FORMULA - Base weight + four boosts. Complete formula breakdown. */}
+          {/* SELECTION FORMULA — Base weight + four boosts. Complete formula breakdown. */}
           <View style={s.transSection}>
             <Text style={s.transSectionTitle}>SELECTION FORMULA</Text>
             {/* Formula breakdown. Every boost explained. How to improve your odds. */}
@@ -222,7 +222,7 @@ export default function BroCoinScreen({ broBucks, onTradeBB, onBack, showToast }
             </View>
           </View>
 
-          {/* LIVE ODDS - Real-time probability. Your chances right now. Transparant. */}
+          {/* LIVE ODDS — Real-time probability. Your chances right now. Transparant. */}
           <View style={s.transSection}>
             <Text style={s.transSectionTitle}>LIVE ODDS (RIGHT NOW)</Text>
             <View style={s.oddsGrid}>
@@ -248,7 +248,7 @@ export default function BroCoinScreen({ broBucks, onTradeBB, onBack, showToast }
             </Text>
           </View>
 
-          {/* TREASURY & PRICING - The model. How BroCoins get backed. Sustainable. */}
+          {/* TREASURY & PRICING — The model. How BroCoins get backed. Sustainable. */}
           <View style={s.transSection}>
             <Text style={s.transSectionTitle}>TREASURY & PRICING</Text>
             {/* Real numbers. Reserve, mints, price. Price = Reserve ÷ Minted. Math-backed. */}
@@ -276,19 +276,19 @@ export default function BroCoinScreen({ broBucks, onTradeBB, onBack, showToast }
             </Text>
           </View>
 
-          {/* PRIVACY GUARANTEE - Your balance is yours alone. Ledger is anonymous. */}
+          {/* PRIVACY GUARANTEE — Your balance is yours alone. Ledger is anonymous. */}
           <View style={s.transSection}>
             <Text style={s.transSectionTitle}>PRIVACY GUARANTEE</Text>
             <Text style={s.transDesc}>
-              BroCoin balances are never displayed publicly on any profile. The public ledger uses rotating salted hashes to anonymize recipients - no entry can ever be traced back to a specific bro. Only you can see your own balance in your private wallet.
+              BroCoin balances are never displayed publicly on any profile. The public ledger uses rotating salted hashes to anonymize recipients — no entry can ever be traced back to a specific bro. Only you can see your own balance in your private wallet.
             </Text>
           </View>
 
-          {/* TRADING RULES - One-way mechanics. No buying. Earn only. Clean model. */}
+          {/* TRADING RULES — One-way mechanics. No buying. Earn only. Clean model. */}
           <View style={s.transSection}>
             <Text style={s.transSectionTitle}>TRADING RULES</Text>
             <Text style={s.transDesc}>
-              You can trade BroCoins → Bro Bucks at the live treasury rate (one-way). You cannot buy BroCoins with Bro Bucks - they can only be earned through the random drop. Minimum trade: {BROCOIN_CONFIG.minTradeAmount} BRO. BroCoins are in-app platform rewards with no external cash value.
+              You can trade BroCoins → Bro Bucks at the live treasury rate (one-way). You cannot buy BroCoins with Bro Bucks — they can only be earned through the random drop. Minimum trade: {BROCOIN_CONFIG.minTradeAmount} BRO. BroCoins are in-app platform rewards with no external cash value.
             </Text>
           </View>
         </ScrollView>
@@ -300,7 +300,7 @@ export default function BroCoinScreen({ broBucks, onTradeBB, onBack, showToast }
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30 }}>
           <View style={s.tradeCard}>
             <Text style={s.tradeTitle}>TRADE BROCOIN → BRO BUCKS</Text>
-            <Text style={s.tradeSub}>Convert your BroCoins to Bro Bucks at the live treasury rate. One-way only - BroCoins must be earned, not bought.</Text>
+            <Text style={s.tradeSub}>Convert your BroCoins to Bro Bucks at the live treasury rate. One-way only — BroCoins must be earned, not bought.</Text>
 
             {/* Current treasury-backed rate displayed. Transparent pricing. */}
             <View style={s.tradeRateBox}>
@@ -309,7 +309,7 @@ export default function BroCoinScreen({ broBucks, onTradeBB, onBack, showToast }
               <Text style={s.tradeRateUsd}>(${priceUSD.toFixed(4)} USD)</Text>
             </View>
 
-            {/* Your holdings - BRO and BB balances side by side. */}
+            {/* Your holdings — BRO and BB balances side by side. */}
             <View style={s.tradeBalRow}>
               <Text style={s.tradeBalLabel}>Your BroCoins:</Text>
               <Text style={s.tradeBalVal}>{myCoins} BRO</Text>
@@ -343,7 +343,7 @@ export default function BroCoinScreen({ broBucks, onTradeBB, onBack, showToast }
               </View>
             )}
 
-            {/* Trade button - Disabled if no amount, no coins, or zero amount. */}
+            {/* Trade button — Disabled if no amount, no coins, or zero amount. */}
             <TouchableOpacity
               style={[s.tradeBtn, (!tradeAmount || parseInt(tradeAmount, 10) < 1 || myCoins < 1) && s.tradeBtnDisabled]}
               onPress={handleTrade}
@@ -352,9 +352,9 @@ export default function BroCoinScreen({ broBucks, onTradeBB, onBack, showToast }
               <Text style={s.tradeBtnTxt}>TRADE NOW</Text>
             </TouchableOpacity>
 
-            {/* Empty state - No coins yet. Encouragement to stay active. */}
+            {/* Empty state — No coins yet. Encouragement to stay active. */}
             {myCoins === 0 && (
-              <Text style={s.tradeEmpty}>You don't have any BroCoins yet. Stay active - the next drop could be yours! 🪙</Text>
+              <Text style={s.tradeEmpty}>You don't have any BroCoins yet. Stay active — the next drop could be yours! 🪙</Text>
             )}
           </View>
 

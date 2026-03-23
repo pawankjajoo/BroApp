@@ -1,14 +1,14 @@
 /**
- * firebase.js - Firebase Configuration & Initialization
+ * firebase.js — Firebase Configuration & Initialization
  * ───────────────────────────────────────────────────────────────────────────
  * Central Firebase setup for the Bro app.
  *
  * SERVICES USED (all on Firebase free Spark plan → 50K MAU free):
- *   1. Firebase Authentication - Email/password, Google, Facebook sign-in
- *      (NO SAML/OIDC - those require Blaze plan)
- *   2. Cloud Firestore - User profiles, bro connections, transactions,
+ *   1. Firebase Authentication — Email/password, Google, Facebook sign-in
+ *      (NO SAML/OIDC — those require Blaze plan)
+ *   2. Cloud Firestore — User profiles, bro connections, transactions,
  *      BroCoin ledger, treasury
- *   3. Firebase Storage - Profile images
+ *   3. Firebase Storage — Profile images
  *
  * SETUP INSTRUCTIONS:
  *   1. Go to https://console.firebase.google.com
@@ -38,7 +38,7 @@ const firebaseConfig = {
   storageBucket:     "YOUR_PROJECT_ID.appspot.com",
   messagingSenderId: "YOUR_SENDER_ID",
   appId:             "YOUR_APP_ID",
-  // measurementId is optional - only needed if you enable Google Analytics
+  // measurementId is optional — only needed if you enable Google Analytics
   // measurementId: "G-XXXXXXXXXX",
 };
 

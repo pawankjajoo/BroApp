@@ -1,7 +1,7 @@
 /**
  * HomeScreen.js
  * ───────────────────────────────────────────────────────────────────────────
- * Your crew at a glance. The bro roster lives here - browse all connections,
+ * Your crew at a glance. The bro roster lives here — browse all connections,
  * spot unread badges instantly, navigate to chat with one tap. All bros, no
  * noise. Ready to play.
  */
@@ -12,7 +12,7 @@ import {
 } from "react-native";
 
 export default function HomeScreen({ bros, onOpenChat }) {
-  // Aggregate unread badge count - know what's waiting, everytime
+  // Aggregate unread badge count — know what's waiting, everytime
   const totalUnread = bros.reduce((a, b) => a + b.unread, 0);
 
   return (
@@ -26,7 +26,7 @@ export default function HomeScreen({ bros, onOpenChat }) {
         data={bros}
         keyExtractor={(b) => String(b.id)}
         renderItem={({ item: bro }) => (
-          {/* Navigate to chat on tap. One bro at a time - that's the flow */}
+          {/* Navigate to chat on tap. One bro at a time — that's the flow */}
           <TouchableOpacity
             style={styles.row}
             onPress={() => onOpenChat(bro)}
@@ -41,7 +41,7 @@ export default function HomeScreen({ bros, onOpenChat }) {
                 BRO · {bro.lastBro} · {bro.broCount || 0} bros
               </Text>
             </View>
-            {/* Unread badge drives urgency - bump to top when something needs atention. Otherwise show last activity */}
+            {/* Unread badge drives urgency — bump to top when something needs atention. Otherwise show last activity */}
             {bro.unread > 0 ? (
               <View style={styles.badge}>
                 <Text style={styles.badgeTxt}>{bro.unread}</Text>

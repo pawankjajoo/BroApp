@@ -1,15 +1,15 @@
 /**
- * firestoreService.js - Firestore Data Layer
+ * firestoreService.js — Firestore Data Layer
  * ───────────────────────────────────────────────────────────────────────────
  * All Firestore CRUD operations for user profiles, bro connections,
  * transactions, and platform stats.
  *
  * COLLECTIONS:
- *   users/{uid}              - User profiles + private settings
- *   bros/{docId}             - Bro connections (bidirectional)
- *   bro_requests/{docId}     - Pending bro requests
- *   transactions/{docId}     - All BB transactions (purchases + bronations)
- *   treasury/global_treasury - Single doc: treasury reserve + platform stats
+ *   users/{uid}              — User profiles + private settings
+ *   bros/{docId}             — Bro connections (bidirectional)
+ *   bro_requests/{docId}     — Pending bro requests
+ *   transactions/{docId}     — All BB transactions (purchases + bronations)
+ *   treasury/global_treasury — Single doc: treasury reserve + platform stats
  */
 
 import {
@@ -27,7 +27,7 @@ import { db, COLLECTIONS, SINGLETON_DOCS } from "./firebase";
 // Your profile is the bridge between local state and Firestore.
 
 /**
- * Get a user profile by UID. Synchronous fetch - bring profile into memory once.
+ * Get a user profile by UID. Synchronous fetch — bring profile into memory once.
  * Includes display name, handle, affiliation, interesting thing, Bro Bucks balance.
  */
 export async function getUserProfile(uid) {
@@ -75,7 +75,7 @@ export async function markProfileComplete(uid) {
 /**
  * Get all bros (friends) for a user.
  * Returns array of user profiles with connection metadata & bronation totals.
- * Your friend list - never exposed to other users, your bussiness only.
+ * Your friend list — never exposed to other users, your bussiness only.
  */
 export async function getUserBros(uid) {
   const q = query(
@@ -127,13 +127,13 @@ export async function sendBroRequest(fromUid, toUid) {
 }
 
 /**
- * Accept a bro request - creates bidirectional connection.
+ * Accept a bro request — creates bidirectional connection.
  */
 export async function acceptBroRequest(requestId, fromUid, toUid) {
-  // Batch write for atomicity - all-or-nothing. No halfway states.
+  // Batch write for atomicity — all-or-nothing. No halfway states.
   const batch = writeBatch(db);
 
-  // Create bro connection - bidirectional, single doc via sorted UIDs.
+  // Create bro connection — bidirectional, single doc via sorted UIDs.
   const connectionId = [fromUid, toUid].sort().join("_");
   batch.set(doc(db, COLLECTIONS.BROS, connectionId), {
     users:        [fromUid, toUid],
@@ -141,7 +141,7 @@ export async function acceptBroRequest(requestId, fromUid, toUid) {
     broNationsBB: { [fromUid]: 0, [toUid]: 0 },
   });
 
-  // Increment bro counts for both users - needed for network growth metrics.
+  // Increment bro counts for both users — needed for network growth metrics.
   batch.update(doc(db, COLLECTIONS.USERS, fromUid), {
     broCount: increment(1),
   });
@@ -149,7 +149,7 @@ export async function acceptBroRequest(requestId, fromUid, toUid) {
     broCount: increment(1),
   });
 
-  // Delete the request - cleanup after accept.
+  // Delete the request — cleanup after accept.
   batch.delete(doc(db, COLLECTIONS.BRO_REQUESTS, requestId));
 
   await batch.commit();
@@ -201,7 +201,7 @@ export async function getBroUids(uid) {
 
 /**
  * Record a Bro Bucks purchase (IAP). Atomically credit user & update platform volume.
- * Drives BroCoin minting - higher transaction volume = faster mints.
+ * Drives BroCoin minting — higher transaction volume = faster mints.
  */
 export async function recordPurchase(uid, { amountBB, productId, transactionId }) {
   const txRef = doc(collection(db, COLLECTIONS.TRANSACTIONS));
@@ -230,10 +230,10 @@ export async function recordPurchase(uid, { amountBB, productId, transactionId }
 export async function recordBroNation(fromUid, toUid, {
   amountBB, feeBB, recipientBB,
 }) {
-  // Batch write - ensures debit, credit, and fee tracking all succeed together.
+  // Batch write — ensures debit, credit, and fee tracking all succeed together.
   const batch = writeBatch(db);
 
-  // Transaction record - immutable ledger entry for auditing.
+  // Transaction record — immutable ledger entry for auditing.
   const txRef = doc(collection(db, COLLECTIONS.TRANSACTIONS));
   batch.set(txRef, {
     fromUid,
@@ -245,18 +245,18 @@ export async function recordBroNation(fromUid, toUid, {
     createdAt:  serverTimestamp(),
   });
 
-  // Deduct from sender - full amount including fee.
+  // Deduct from sender — full amount including fee.
   batch.update(doc(db, COLLECTIONS.USERS, fromUid), {
     broBucksBB:  increment(-amountBB),
     lastActiveAt: serverTimestamp(),
   });
 
-  // Credit recipient - full amount minus fee.
+  // Credit recipient — full amount minus fee.
   batch.update(doc(db, COLLECTIONS.USERS, toUid), {
     broBucksBB: increment(recipientBB),
   });
 
-  // Update bro connection with bronation total - builds relationship history.
+  // Update bro connection with bronation total — builds relationship history.
   const connectionId = [fromUid, toUid].sort().join("_");
   batch.update(doc(db, COLLECTIONS.BROS, connectionId), {
     [`broNationsBB.${fromUid}`]: increment(amountBB),
@@ -274,7 +274,7 @@ export async function recordBroNation(fromUid, toUid, {
 async function updatePlatformStats(transactionBB, platformFeeBB) {
   const treasuryRef = doc(db, COLLECTIONS.TREASURY, SINGLETON_DOCS.TREASURY_STATE);
 
-  // Treasury transaction pattern - read before write, handle init + updates atomicly.
+  // Treasury transaction pattern — read before write, handle init + updates atomicly.
   await runTransaction(db, async (transaction) => {
     const treasuryDoc = await transaction.get(treasuryRef);
 
@@ -289,7 +289,7 @@ async function updatePlatformStats(transactionBB, platformFeeBB) {
       });
     } else {
       const data = treasuryDoc.data();
-      // 5% of each fee flows to treasury - funds BroCoin minting.
+      // 5% of each fee flows to treasury — funds BroCoin minting.
       const treasuryDeposit = Math.floor(platformFeeBB * 0.05);
       transaction.update(treasuryRef, {
         globalTransactionsBB: increment(transactionBB),
@@ -321,7 +321,7 @@ export async function getTreasuryState() {
  * Listen to real-time treasury updates.
  */
 export function onTreasuryChange(callback) {
-  // Real-time listener - UI stays in sync with treasury price & mint count.
+  // Real-time listener — UI stays in sync with treasury price & mint count.
   return onSnapshot(
     doc(db, COLLECTIONS.TREASURY, SINGLETON_DOCS.TREASURY_STATE),
     (snap) => {

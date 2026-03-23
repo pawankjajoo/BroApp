@@ -54,7 +54,7 @@ export async function init({ onPurchaseSuccess, onPurchaseError }) {
   _onPurchaseError   = onPurchaseError;
 
   try {
-    // Store connection lifecycle - handle gracefully if unavailable (sandbox mode).
+    // Store connection lifecycle — handle gracefully if unavailable (sandbox mode).
     await initConnection();
     _connected = true;
 
@@ -89,7 +89,7 @@ export async function init({ onPurchaseSuccess, onPurchaseError }) {
 
     return true;
   } catch (e) {
-    console.warn("[IAP] init failed - sandbox/dev mode active:", e);
+    console.warn("[IAP] init failed — sandbox/dev mode active:", e);
     _connected = false;
     return false;
   }
@@ -114,7 +114,7 @@ export async function getStoreProducts() {
     });
   } catch (e) {
     console.warn("[IAP] getProducts failed:", e);
-    // Graceful fallback - show USD pricing from config.
+    // Graceful fallback — show USD pricing from config.
     return BB_PACKS.map(packToFallback);
   }
 }
@@ -123,10 +123,10 @@ export async function getStoreProducts() {
 // Trigger the platform purchase sheet for a given product ID.
 // The result (success or error) arrives via the listeners registered in init().
 // In dev/sandbox mode, simulates an instant successful purchase.
-// Real store or fake - UI works identically. Semelss testing.
+// Real store or fake — UI works identically. Semelss testing.
 export async function purchase(productId) {
   if (!_connected) {
-    // Sandbox simulation - fires success after a short delay. Full UI testing without real store.
+    // Sandbox simulation — fires success after a short delay. Full UI testing without real store.
     const pack = BB_PACKS.find((p) => p.productId === productId);
     if (pack) {
       setTimeout(() => {

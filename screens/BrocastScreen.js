@@ -14,7 +14,7 @@ import { BRO_EXPRESSIONS } from "../constants/bro";
 
 export default function BrocastScreen({ broCount, onBrocast }) {
   const [sent, setSent] = useState(false);
-  // Scale animation for broadcast button - premium haptic feedback with visual punch
+  // Scale animation for broadcast button — premium haptic feedback with visual punch
   const scale = useRef(new Animated.Value(1)).current;
   const BRO_COUNT = 6;
 
@@ -42,7 +42,7 @@ export default function BrocastScreen({ broCount, onBrocast }) {
         <Text style={styles.sub}>BROADCAST · ONE BRO TO RULE THEM ALL</Text>
       </View>
       <View style={styles.body}>
-        {/* Counter: Perpetual tally of brocasts sent. Social proof - build momentum */}
+        {/* Counter: Perpetual tally of brocasts sent. Social proof — build momentum */}
         <View>
           <Text style={styles.count}>{broCount.toLocaleString()}</Text>
           <Text style={styles.countLbl}>TOTAL BROS SENT</Text>

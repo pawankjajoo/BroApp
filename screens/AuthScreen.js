@@ -1,5 +1,5 @@
 /**
- * AuthScreen.js - Your Gateway to Brotherhood
+ * AuthScreen.js — Your Gateway to Brotherhood
  * ───────────────────────────────────────────────────────────────────────────
  * The entrance to the BRO app. First thing users see, hardened to stay secure.
  *
@@ -462,7 +462,7 @@ export default function AuthScreen({ onAuthSuccess, showToast }) {
               onAuthSuccess({ email, emailVerified: true }, {});
             }}
           >
-            <Text style={styles.primaryBtnTxt}>I VERIFIED - LET ME IN</Text>
+            <Text style={styles.primaryBtnTxt}>I VERIFIED — LET ME IN</Text>
           </TouchableOpacity>
 
           {/* Resend link if user didn't recieve it or it expired (rate-limited) */}

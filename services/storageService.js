@@ -1,10 +1,10 @@
 /**
- * storageService.js - Firebase Storage for Profile Images
+ * storageService.js — Firebase Storage for Profile Images
  * ───────────────────────────────────────────────────────────────────────────
  * Handles uploading, downloading, and deleting profile images.
  *
  * Storage structure:
- *   profile_images/{uid}/avatar.jpg  - User's profile photo
+ *   profile_images/{uid}/avatar.jpg  — User's profile photo
  *
  * Security: Firebase Storage rules restrict read/write to the owning user.
  * Images are compressed to 70% quality and resized to 1:1 aspect before upload.
@@ -29,7 +29,7 @@ export async function uploadProfileImage(uid, localUri) {
     const response = await fetch(localUri);
     const blob = await response.blob();
 
-    // Firebase Storage upload pattern - path includes user UID for access control.
+    // Firebase Storage upload pattern — path includes user UID for access control.
     const imageRef = ref(storage, `profile_images/${uid}/avatar.jpg`);
     await uploadBytes(imageRef, blob, {
       contentType: "image/jpeg",
@@ -39,10 +39,10 @@ export async function uploadProfileImage(uid, localUri) {
       },
     });
 
-    // Get the download URL - stable, signed URL for Firestore reference.
+    // Get the download URL — stable, signed URL for Firestore reference.
     const downloadUrl = await getDownloadURL(imageRef);
 
-    // Update user profile in Firestore - profile image lifecycle complete.
+    // Update user profile in Firestore — profile image lifecycle complete.
     await updateDoc(doc(db, COLLECTIONS.USERS, uid), {
       avatarUrl: downloadUrl,
     });

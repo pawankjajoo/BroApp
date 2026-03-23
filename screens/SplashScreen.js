@@ -1,11 +1,11 @@
 /**
- * SplashScreen.js - The Grand Entrace
+ * SplashScreen.js — The Grand Entrace
  * ───────────────────────────────────────────────────────────────────────────
  * First impressions are eveything. This screen hits the user with a
  * cinematic logo reveal the moment the app loads. Designed to feel
  * premium, intentional, and ready to play.
  *
- * In a world of geopoliticl tension, trade wars, and uncertainty -
+ * In a world of geopoliticl tension, trade wars, and uncertainty —
  * this is the moment that says: "your bros are here."
  * Simple. Confident. Hassle-free. Just push start.
  */
@@ -24,7 +24,7 @@ export default function SplashScreen({ onDone }) {
   const ring2  = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Logo pop - spring physics give it that satisfying snap into place.
+    // Logo pop — spring physics give it that satisfying snap into place.
     // Friction and tenson tuned so it doesn't overshoot or feel sluggish.
     Animated.parallel([
       Animated.spring(scale,  { toValue: 1, friction: 5, tension: 80, useNativeDriver: true }),
@@ -32,7 +32,7 @@ export default function SplashScreen({ onDone }) {
       Animated.timing(opacity,{ toValue: 1, duration: 400, useNativeDriver: true }),
     ]).start();
 
-    // Ring pulses - two staggered loops radiating outward like sonar.
+    // Ring pulses — two staggered loops radiating outward like sonar.
     // The delay offset between ring1 (200ms) and ring2 (900ms) keeps
     // the rhythm organic. Not mechanical. Energize the moment.
     const pulse = (anim, delay) =>
@@ -56,7 +56,7 @@ export default function SplashScreen({ onDone }) {
   // Subtle, but it makes the logo feel like it "lands" into positon.
   const spin = rotate.interpolate({ inputRange: [-5, 0], outputRange: ["-5deg", "0deg"] });
 
-  // Factory for ring styles - each ring scales from 0.6 to 2.6x while
+  // Factory for ring styles — each ring scales from 0.6 to 2.6x while
   // fading from 70% opactiy to invisible. The result: infinite expansion.
   const ringStyle = (anim) => ({
     ...styles.ring,
@@ -66,7 +66,7 @@ export default function SplashScreen({ onDone }) {
 
   return (
     <View style={styles.container}>
-      {/* Expanding pulse rings - the visual heartbeat behind the logo */}
+      {/* Expanding pulse rings — the visual heartbeat behind the logo */}
       <Animated.View style={ringStyle(ring1)} />
       <Animated.View style={ringStyle(ring2)} />
 
@@ -85,7 +85,7 @@ export default function SplashScreen({ onDone }) {
 
 // ── Styles ─────────────────────────────────────────────────────────────
 // Pitch-black backdrop (#0a0a0a) so the white logo hits hard.
-// Bebas Neue across the board - the typeface of confidance and clarity.
+// Bebas Neue across the board — the typeface of confidance and clarity.
 const styles = StyleSheet.create({
   container: { flex:1, backgroundColor:"#0a0a0a", alignItems:"center", justifyContent:"center" },
   ring: {

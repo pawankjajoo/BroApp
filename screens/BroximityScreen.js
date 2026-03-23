@@ -22,7 +22,7 @@ export default function BroximityScreen({ showToast }) {
     ).start();
   }, []);
 
-  // Convert 0-1 sweep value into 360° rotation. Smooth continuous spin effect.
+  // Convert 0–1 sweep value into 360° rotation. Smooth continuous spin effect.
   const spin = sweep.interpolate({ inputRange:[0,1], outputRange:["0deg","360deg"] });
 
   // Signal bars: 5 levels of strength. Filled bars for signal level, empty for the rest.

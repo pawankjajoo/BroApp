@@ -1,5 +1,5 @@
 /**
- * notifications.js - Push Notification Service
+ * notifications.js — Push Notification Service
  * ───────────────────────────────────────────────────────────────────────────
  * Uses expo-notifications for local + push notifications.
  *
@@ -41,14 +41,14 @@ Notifications.setNotificationHandler({
  * @returns {{ success, token } | { success, error }}
  */
 export async function registerForPushNotifications(uid) {
-  // Permission flow - iOS & Android handle differently under hood, Expo handles it.
+  // Permission flow — iOS & Android handle differently under hood, Expo handles it.
   if (!Device.isDevice) {
     console.log("[Notifications] Must use physical device for push");
     return { success: false, error: "Push requires a physical device." };
   }
 
   try {
-    // Check existing status - might already be granted, saves a prompt.
+    // Check existing status — might already be granted, saves a prompt.
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
 
@@ -61,13 +61,13 @@ export async function registerForPushNotifications(uid) {
       return { success: false, error: "Notification permission denied." };
     }
 
-    // Get Expo push token - unique per app install. Send this to backend for server-side push.
+    // Get Expo push token — unique per app install. Send this to backend for server-side push.
     const tokenData = await Notifications.getExpoPushTokenAsync({
       projectId: "YOUR-EAS-PROJECT-ID-HERE", // Replace with eas.json projectId
     });
     const pushToken = tokenData.data;
 
-    // Android notification channel setup - controls vibration, sound, importance.
+    // Android notification channel setup — controls vibration, sound, importance.
     if (Platform.OS === "android") {
       await Notifications.setNotificationChannelAsync("bro-alerts", {
         name: "Bro Alerts",
@@ -78,7 +78,7 @@ export async function registerForPushNotifications(uid) {
       });
     }
 
-    // Store token in Firestore - enables Cloud Functions to push to this user.
+    // Store token in Firestore — enables Cloud Functions to push to this user.
     if (uid) {
       await updateDoc(doc(db, COLLECTIONS.USERS, uid), {
         pushToken,
@@ -100,7 +100,7 @@ export async function registerForPushNotifications(uid) {
  * Show a local notification immediately.
  */
 export async function showLocalNotification({ title, body, data = {} }) {
-  // Local notification scheduling - fires on device, no server needed.
+  // Local notification scheduling — fires on device, no server needed.
   await Notifications.scheduleNotificationAsync({
     content: {
       title,
@@ -109,12 +109,12 @@ export async function showLocalNotification({ title, body, data = {} }) {
       sound: "default",
       ...(Platform.OS === "android" ? { channelId: "bro-alerts" } : {}),
     },
-    trigger: null, // Immediately - null = right now.
+    trigger: null, // Immediately — null = right now.
   });
 }
 
 /**
- * Show a BroCoin mint notification (private - only to the winner).
+ * Show a BroCoin mint notification (private — only to the winner).
  */
 export async function showBroCoinMintNotification(milestone) {
   await showLocalNotification({
@@ -153,7 +153,7 @@ export async function showBroRequestNotification(fromName) {
  * Returns an unsubscribe function.
  */
 export function onNotificationReceived(callback) {
-  // Listener pattern - fires when notification arrives while app active.
+  // Listener pattern — fires when notification arrives while app active.
   const subscription = Notifications.addNotificationReceivedListener(callback);
   return () => subscription.remove();
 }
@@ -163,7 +163,7 @@ export function onNotificationReceived(callback) {
  * Returns an unsubscribe function.
  */
 export function onNotificationTapped(callback) {
-  // Listener for user interaction - tap opens app and routes based on notification data.
+  // Listener for user interaction — tap opens app and routes based on notification data.
   const subscription = Notifications.addNotificationResponseReceivedListener(
     (response) => {
       const data = response.notification.request.content.data;
