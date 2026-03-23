@@ -1,12 +1,3 @@
-/**
- * ChatScreen.js
- * ───────────────────────────────────────────────────────────────────────────
- * ONLY two things can be sent in a Bro chat:
- *   1. A bro expression (one of 20 preset variants) — free
- *   2. A Bro Bucks bronation (deducted from sender's wallet)
- *
- * No free text. No calls. No media. Bro only.
- */
 
 import React, { useState, useRef } from "react";
 import {
@@ -27,13 +18,13 @@ export default function ChatScreen({
   const [sending, setSending]             = useState(false);
   const [donateOpen, setDonateOpen]       = useState(false);
   const [selectedAmount, setSelectedAmount] = useState(null);
-  // Scale animation for send button — adds punch to teh interaction
+  // Scale animation for send button . adds punch to teh interaction
   const btnScale = useRef(new Animated.Value(1)).current;
   const flatRef  = useRef(null);
 
   const pressBro = () => {
     if (sending) return;
-    // Haptic feedback — users feel the action, not just see it
+    // Haptic feedback . users feel the action, not just see it
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setSending(true);
     // Send animation: compress then release for tactile responsiveness
@@ -57,7 +48,7 @@ export default function ChatScreen({
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       showToast(`${selectedAmount.display} sent to ${bro.name}! ${selectedAmount.badge}`);
     } else {
-      // Insufficient balance — send them to top up, no friction
+      // Insufficient balance . send them to top up, no friction
       onGoWallet();
     }
     setDonateOpen(false);
@@ -160,7 +151,7 @@ export default function ChatScreen({
             </TouchableOpacity>
           </Animated.View>
 
-          {/* Side actions: Open bronation modal, ping, or set as bro-mance — secondary layer */}
+          {/* Side actions: Open bronation modal, ping, or set as bro-mance . secondary layer */}
           <View style={styles.sideBtns}>
             <TouchableOpacity
               style={[styles.sideBtn, styles.sideBtnNation]}
@@ -193,7 +184,7 @@ export default function ChatScreen({
               Send Bro Bucks to {bro.name} · Wallet: {formatBB(broBucks)}
             </Text>
 
-            {/* Amount selector: Show all presets. Disable those out of reach — clear, instant feedback */}
+            {/* Amount selector: Show all presets. Disable those out of reach . clear, instant feedback */}
             {BRONATION_AMOUNTS.map((amt) => {
               const canAfford = broBucks >= amt.bucks;
               const recipientBB = calcRecipientAmount(amt.bucks);
@@ -223,8 +214,7 @@ export default function ChatScreen({
             {/* Platform fee disclosure: Apple §3.1.1 & Google Play require transparency. Show what recepient actually gets */}
             <Text style={styles.feeDisclosure}>
               A {PLATFORM_FEE_LABEL} platform fee applies to all Bro-nations.{"\n"}
-              Recipient receives 70% of the amount sent.
-            </Text>
+              Recipient receives 70% of the amount sent.            </Text>
 
             {broBucks < BRONATION_AMOUNTS[0].bucks ? (
               <TouchableOpacity

@@ -1,55 +1,3 @@
-/**
- * ───────────────────────────────────────────────────────────────────────────
- * PROFILESCREEN — Bro-file
- * ───────────────────────────────────────────────────────────────────────────
- * Intentionally minimal profile by design. Elegant simplicity.
- *
- * HERO SECTION:
- *   • Profile image (tap for camera/library picker)
- *   • Display name + handle + "Est. 2014"
- *   • Affiliation badge (work/school + verification checkmark)
- *   • One interesting thing (max 150 chars)
- *   • Edit button
- *
- * EDIT FLOW:
- *   • Image picker (camera or library)
- *   • Affiliation selector (work OR school)
- *   • Company/school name input
- *   • Email verifier (domain validation)
- *   • One interesting thing textarea
- *   • Save to persist
- *
- * STATS ROW:
- *   • Your bros count
- *   • Bros sent (bro-nations)
- *   • Bro Bucks balance (premium stat)
- *
- * RECOMMENDED BROS:
- *   • 2nd & 3rd degree connections
- *   • Tap to view full list
- *   • Add bro button on each
- *
- * BROCOIN WALLET CARD:
- *   • Private balance (never shared publicly)
- *   • Mint progress bar
- *   • Tap to visit BroCoin hub
- *
- * FEATURE GRID:
- *   • 8 core features (2 columns)
- *   • Icons + titles + descriptions
- *   • Tap routing to feature screens
- *
- * NOTIFICATION SETTINGS:
- *   • Bro 2 Bro, Bro-cast, Bro-nations, Bro-ximity
- *   • Toggle switches
- *   • Persistent storage
- *
- * SIGN OUT:
- *   • Destructive action (requires confirmation)
- *   • Bottom of screen
- *
- * Three fields. That's it. No bio. No links. No extras. Bro.
- */
 
 import React, { useState, useMemo } from "react";
 import {
@@ -93,12 +41,10 @@ export default function ProfileScreen({
   const [showRecommended, setShowRecommended] = useState(false);
 
   // ── Recommended bros (2nd & 3rd degree connections) ────────────────────────
-  // Grow your network. Privacy preserved — others can't see your bro list.
-  const recommendedBros = useMemo(() => getRecommendedBros(0, 3), []);
+  // Grow your network. Privacy preserved . others can't see your bro list.  const recommendedBros = useMemo(() => getRecommendedBros(0, 3), []);
 
-  // ── BroCoin stats (PRIVATE — only shown to the owner) ───────────────────
-  // Never displayed on your public profile. Only you see this.
-  const myBroCoins   = getMyBroCoins(0);
+  // ── BroCoin stats (PRIVATE . only shown to the owner) ───────────────────
+  // Never displayed on your public profile. Only you see this.  const myBroCoins   = getMyBroCoins(0);
   const globalStats  = getGlobalStats();
   const mintProgress = getMintProgress();
   const broCoinPrice = getBroCoinPriceUSD();
@@ -110,9 +56,7 @@ export default function ProfileScreen({
   const [editInteresting, setEditInteresting] = useState(userProfile.interestingThing || "");
   const [verificationSent, setVerificationSent] = useState(false);
 
-  // ── Image picker — Library or camera. Square crop. Low quality save. ──
-  // Tap image to launch options. Replace or remove anytime.
-  const pickImage = async () => {
+  // ── Image picker . Library or camera. Square crop. Low quality save. ──
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
       Alert.alert("Permission needed", "Allow photo access to set your bro-file pic.");
@@ -130,8 +74,7 @@ export default function ProfileScreen({
     }
   };
 
-  // Camera snap. Also square crop, low quality. Same update flow.
-  const takePhoto = async () => {
+  // Camera snap. Also square crop, low quality. Same update flow.  const takePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
       Alert.alert("Permission needed", "Allow camera access to take a bro-file pic.");
@@ -158,8 +101,6 @@ export default function ProfileScreen({
   };
 
   // ── Verification flow – Email domain validation. Build trust. ──
-  // Ensures legit .edu or real work domains. No personal emails for work.
-  const handleSendVerification = () => {
     if (!editVerifyEmail) {
       showToast("Enter your email first, bro");
       return;
@@ -170,8 +111,7 @@ export default function ProfileScreen({
       return;
     }
     if (editAffType === "work") {
-      // Basic check: not a personal email domain. Block Gmail, Yahoo, etc.
-      const personalDomains = ["gmail.com","yahoo.com","hotmail.com","outlook.com","icloud.com","aol.com","protonmail.com"];
+      // Basic check: not a personal email domain. Block Gmail, Yahoo, etc.      const personalDomains = ["gmail.com","yahoo.com","hotmail.com","outlook.com","icloud.com","aol.com","protonmail.com"];
       const domain = editVerifyEmail.split("@")[1]?.toLowerCase();
       if (!domain || personalDomains.includes(domain)) {
         showToast("Use your work email (not personal), bro");
@@ -182,8 +122,6 @@ export default function ProfileScreen({
     setVerificationSent(true);
     showToast(`Verification sent to ${editVerifyEmail} ✉️`);
     // In production this would hit a real verification endpoint
-    // For demo, auto-verify after a delay. Real API would require email click.
-    setTimeout(() => {
       onUpdateProfile({
         affiliation: {
           type: editAffType,
@@ -197,9 +135,8 @@ export default function ProfileScreen({
   };
 
   // ── Profile save handler. Persists all three fields. Simple. ──
-  // Saves one interesting thing + affiliation. Validates existing verification.
-  const handleSaveProfile = () => {
-    // Save interesting thing — slice ensures max length
+  // Saves one interesting thing + affiliation. Validates existing verification.  const handleSaveProfile = () => {
+    // Save interesting thing . slice ensures max length
     onUpdateProfile({ interestingThing: editInteresting.slice(0, PROFILE_MAX_INTERESTING_LENGTH) });
     // Save affiliation (unverified if not yet verified)
     if (editAffType && editAffName) {
@@ -219,8 +156,7 @@ export default function ProfileScreen({
   };
 
   // ── Recommended Bros subscreen ──────────────────────────────────────────
-  // Full-screen list. 2nd & 3rd degree connections. Privacy preserved.
-  if (showRecommended) {
+  // Full-screen list. 2nd & 3rd degree connections. Privacy preserved.  if (showRecommended) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={[styles.header, { flexDirection:"row", alignItems:"center", gap:10 }]}>
@@ -237,11 +173,10 @@ export default function ProfileScreen({
           data={recommendedBros}
           keyExtractor={(item) => String(item.id)}
           showsVerticalScrollIndicator={false}
-          {/* Privacy notice — transparency about algorithm. No surveillance. */}
+          {/* Privacy notice . transparency about algorithm. No surveillance. */}
           ListHeaderComponent={
             <Text style={styles.recPrivacyNote}>
-              Recommendations based on your network. You cannot see who others are bros with.
-            </Text>
+              Recommendations based on your network. You cannot see who others are bros with.            </Text>
           }
           renderItem={({ item }) => (
             <View style={styles.recRow}>
@@ -272,8 +207,7 @@ export default function ProfileScreen({
           {/* Privacy reinforcement. Your list stays private. */}
           ListFooterComponent={
             <Text style={styles.recFooterNote}>
-              Bro lists are private. You'll never see who someone else is bros with — only recommendations based on shared connections.
-            </Text>
+              Bro lists are private. You'll never see who someone else is bros with . only recommendations based on shared connections.            </Text>
           }
         />
       </SafeAreaView>
@@ -281,8 +215,7 @@ export default function ProfileScreen({
   }
 
   // ── Notifications subscreen ───────────────────────────────────────────────
-  // Four notification types. Toggle on/off. Real-time preference syncing.
-  if (showNotifs) {
+  // Four notification types. Toggle on/off. Real-time preference syncing.  if (showNotifs) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={[styles.header, { flexDirection:"row", alignItems:"center", gap:10 }]}>
@@ -321,8 +254,7 @@ export default function ProfileScreen({
   }
 
   // ── Edit Profile subscreen ────────────────────────────────────────────────
-  // Full-screen edit. Image + affiliation + one thing. Keyboard aware.
-  if (showEditProfile) {
+  // Full-screen edit. Image + affiliation + one thing. Keyboard aware.  if (showEditProfile) {
     return (
       <SafeAreaView style={styles.container}>
         <KeyboardAvoidingView
@@ -373,7 +305,7 @@ export default function ProfileScreen({
               <Text style={styles.editSectionTitle}>WHERE YOU AT, BRO?</Text>
               <Text style={styles.editDesc}>Pick one: work or school. We verify so bros know you're legit.</Text>
 
-              {/* Toggle buttons — work or school affiliation selection. */}
+              {/* Toggle buttons . work or school affiliation selection. */}
               <View style={styles.affToggle}>
                 <TouchableOpacity
                   style={[styles.affBtn, editAffType === "work" && styles.affBtnActive]}
@@ -443,8 +375,7 @@ export default function ProfileScreen({
             <View style={styles.editSection}>
               <Text style={styles.editSectionTitle}>1 INTERESTING THING</Text>
               <Text style={styles.editDesc}>
-                Just one thing. That's it. Make it count, bro.
-              </Text>
+                Just one thing. That's it. Make it count, bro.              </Text>
               {/* Multiline input. Auto-slices to max length. Real-time counter. */}
               <TextInput
                 style={[styles.editInput, styles.editInputMulti]}
@@ -457,7 +388,7 @@ export default function ProfileScreen({
                 numberOfLines={3}
                 textAlignVertical="top"
               />
-              {/* Character counter — shows usage. Transparency. */}
+              {/* Character counter . shows usage. Transparency. */}
               <Text style={styles.charCount}>
                 {editInteresting.length}/{PROFILE_MAX_INTERESTING_LENGTH}
               </Text>
@@ -466,8 +397,7 @@ export default function ProfileScreen({
             {/* Design philosophy note. Reinforce intentional minimalism. */}
             <Text style={styles.designNote}>
               That's your whole bro-file. Image + where you're at + one thing.{"\n"}
-              No bio. No links. No extras. Just bro.
-            </Text>
+              No bio. No links. No extras. Just bro.            </Text>
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
@@ -475,11 +405,10 @@ export default function ProfileScreen({
   }
 
   // ── Main Profile screen ───────────────────────────────────────────────────
-  // Hero section + stats + recommended + brocoin + features + settings.
-  return (
+  // Hero section + stats + recommended + brocoin + features + settings.  return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Hero / Avatar — Your face. Tap to change. */}
+        {/* Hero / Avatar . Your face. Tap to change. */}
         <View style={styles.heroSection}>
           {/* Image or fist emoji placeholder. Camera badge visible. */}
           <TouchableOpacity onPress={showImageOptions} activeOpacity={0.8}>
@@ -498,7 +427,7 @@ export default function ProfileScreen({
           <Text style={styles.profileName}>{userProfile.displayName}</Text>
           <Text style={styles.profileHandle}>{userProfile.handle} · Est. 2014</Text>
 
-          {/* Affiliation badge — Shows work/school with verification checkmark if verified. */}
+          {/* Affiliation badge . Shows work/school with verification checkmark if verified. */}
           {userProfile.affiliation?.name && (
             <View style={styles.affBadgeRow}>
               <Text style={styles.affBadgeIcon}>
@@ -511,12 +440,12 @@ export default function ProfileScreen({
             </View>
           )}
 
-          {/* Interesting thing — One quote from the profile. Italic emphasis. */}
+          {/* Interesting thing . One quote from the profile. Italic emphasis. */}
           {userProfile.interestingThing ? (
             <Text style={styles.interestingThing}>"{userProfile.interestingThing}"</Text>
           ) : null}
 
-          {/* Edit button — Taps to edit profile. Easy access. */}
+          {/* Edit button . Taps to edit profile. Easy access. */}
           <TouchableOpacity
             style={styles.editProfileBtn}
             onPress={() => {
@@ -532,27 +461,27 @@ export default function ProfileScreen({
           </TouchableOpacity>
         </View>
 
-        {/* Stats row — Three key numbers. BroCoin not shown publicly (private). */}
+        {/* Stats row . Three key numbers. BroCoin not shown publicly (private). */}
         {/* Your network size + engagement + spending power. Transparent metrics. */}
         <View style={styles.statsRow}>
-          {/* Bros count — your connection size */}
+          {/* Bros count . your connection size */}
           <View style={styles.stat}>
             <Text style={styles.statN}>{bros?.length || 6}</Text>
             <Text style={styles.statL}>BROS</Text>
           </View>
-          {/* Bros sent — your generosity tracked */}
+          {/* Bros sent . your generosity tracked */}
           <View style={[styles.stat, styles.statBorder]}>
             <Text style={styles.statN}>{broCount.toLocaleString()}</Text>
             <Text style={styles.statL}>BROS SENT</Text>
           </View>
-          {/* Bro Bucks — your spending balance (non-private display context) */}
+          {/* Bro Bucks . your spending balance (non-private display context) */}
           <View style={[styles.stat, styles.statBorder]}>
             <Text style={[styles.statN, { color:"#ffe066", fontSize:18 }]}>{formatBB(broBucks)}</Text>
             <Text style={styles.statL}>BRO BUCKS</Text>
           </View>
         </View>
 
-        {/* Recommended bros preview — Teaser card. Tap for full list. */}
+        {/* Recommended bros preview . Teaser card. Tap for full list. */}
         {/* Shows avatars of 2nd & 3rd degree connections. Privacy-safe recommendations. */}
         <TouchableOpacity
           style={styles.recPreview}
@@ -579,7 +508,7 @@ export default function ProfileScreen({
           <Text style={styles.recPreviewArrow}>›</Text>
         </TouchableOpacity>
 
-        {/* BroCoin wallet card — PRIVATE: only you see your balance */}
+        {/* BroCoin wallet card . PRIVATE: only you see your balance */}
         {/* Never shown on your public profile. Treasury-backed value. Tap for hub. */}
         <TouchableOpacity
           style={styles.broCoinCard}
@@ -612,7 +541,7 @@ export default function ProfileScreen({
           </View>
         </TouchableOpacity>
 
-        {/* Feature grid — 8 features, 2 columns. Icons + titles + descriptions. */}
+        {/* Feature grid . 8 features, 2 columns. Icons + titles + descriptions. */}
         {/* Each card tappable. Routes to feature or modal. Wallet shows balance. */}
         <FlatList
           data={BRO_FEATURES}
@@ -653,7 +582,7 @@ export default function ProfileScreen({
           )}
         />
 
-        {/* Sign Out — Destructive action. Requires confirmation dialog. Bottom placement. */}
+        {/* Sign Out . Destructive action. Requires confirmation dialog. Bottom placement. */}
         {onSignOut && (
           <TouchableOpacity
             style={styles.signOutBtn}

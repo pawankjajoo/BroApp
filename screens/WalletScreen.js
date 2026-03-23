@@ -1,34 +1,4 @@
-/**
- * WalletScreen.js — Bro Bucks Store
- * ──────────────────────────────────────────────────────────────────────────
- *
- * CURRENCY SCALE: $1,000 = 1,000,000,000 BB (1 billion)
- *                 Rate is linear: 1,000,000 BB per $1
- *
- *  $1    →       1,000,000 BB   (1M BB)   10,000 💰
- *  $3    →       3,000,000 BB   (3M BB)   30,000 💰
- *  $5    →       5,000,000 BB   (5M BB)   50,000 💰
- *  $10   →      10,000,000 BB  (10M BB)  100,000 💰
- *  $100  →     100,000,000 BB (100M BB)    1M 💰
- *  $1,000→   1,000,000,000 BB   (1B BB)   10M 💰
- */
 
-/**
- * ───────────────────────────────────────────────────────────────────
- * WALLETSCREEN — Bro Bucks Store
- * ───────────────────────────────────────────────────────────────────
- * In-app currency purchase flow. Driving monetization with purpose.
- *
- * Screens:
- *   • Balance Card — Your instant Bro Bucks snapshot
- *   • Exchange Rate Table — Transparent pricing, full visibility
- *   • Pack Grid — Flexible denominations, tap-to-confirm purchace
- *   • Emoji Preview — Visual abundance. More bucks = more 💰
- *   • Compliance Disclosures — Apple/Google requirements, no fluff
- *
- * Double-tap confirmation prevents accidental purchases. Haptics
- * energize the experience. Every interaction feels intentional.
- */
 
 import React, { useState } from "react";
 import {
@@ -38,7 +8,7 @@ import {
 import * as Haptics from "expo-haptics";
 import { BB_PACKS, formatBB, bbEmojiCount } from "../constants/bro";
 
-// Rate reference rows shown in the exchange table — transparent pricing backbone
+// Rate reference rows shown in the exchange table . transparent pricing backbone
 const RATE_ROWS = [
   { usd:"$1",     bb:"1,000,000 BB",     short:"1M BB",   emoji:"10,000 💰"  },
   { usd:"$3",     bb:"3,000,000 BB",     short:"3M BB",   emoji:"30,000 💰"  },
@@ -54,7 +24,7 @@ export default function WalletScreen({
   const [confirmPack, setConfirmPack] = useState(null);
   const [showTable, setShowTable]     = useState(false);
 
-  // Merge live store pricing with local pack metadata — one source of truth
+  // Merge live store pricing with local pack metadata . one source of truth
   // Real pricing from the store, fallback to config if unavailable
   const packs = BB_PACKS.map((pack) => {
     const live = storeProducts?.find((p) => p.productId === pack.productId);
@@ -64,23 +34,16 @@ export default function WalletScreen({
     };
   });
 
-  // Double-tap safeguard. Prevent impulse purchases. Build trust through intent.
-  const handleBuy = (pack) => {
     if (purchasing) return;
     if (confirmPack?.productId === pack.productId) {
-      // Second tap → confirm and trigger purchace. Heavy haptic signals finality.
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
       setConfirmPack(null);
       onPurchase(pack.productId);
     } else {
-      // First tap → show confirm state. Medium haptic signals intent.
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       setConfirmPack(pack);
     }
   };
 
-  // Emoji preview: visualize abundance without overwhelming. Cap at 20, show remainder.
-  // Psychological punch: more emojis = feels like a bigger deal
+  // Emoji preview: visualize abundance without overwhelming. Cap at 20, show remainder.  // Psychological punch: more emojis = feels like a bigger deal
   const emojiPreview = (pack) => {
     const shown  = Math.min(pack.emojiCount, 20);
     const remain = pack.emojiCount - shown;
@@ -190,17 +153,17 @@ export default function WalletScreen({
                   </View>
                 </View>
 
-                {/* BB amount — mega packs get green highlight for prestige */}
+                {/* BB amount . mega packs get green highlight for prestige */}
                 <Text style={[styles.packBB, isMega && { color:"#4ade80" }]}>
                   {pack.displayBB}
                 </Text>
 
-                {/* Emoji preview — visual proof of value. Abundance at a glance. */}
+                {/* Emoji preview . visual proof of value. Abundance at a glance. */}
                 <Text style={styles.packEmojis} numberOfLines={2}>
                   {emojiPreview(pack)}
                 </Text>
 
-                {/* Confirm prompt — second tap triggers purchace */}
+                {/* Confirm prompt . second tap triggers purchace */}
                 {isConfirming && !isBuying && (
                   <View style={styles.confirmRow}>
                     <Text style={styles.confirmTxt}>
@@ -216,18 +179,16 @@ export default function WalletScreen({
         {/* Reset note: consumable currency, no refunds. Clear terms. */}
         <Text style={styles.restoreNote}>
           Bro Bucks are consumable in-app currency. All purchases are final.{"\n"}
-          $1,000 real USD = 1,000,000,000 Bro Bucks. Rate is always 1M BB per $1.
-        </Text>
+          $1,000 real USD = 1,000,000,000 Bro Bucks. Rate is always 1M BB per $1.        </Text>
 
-        {/* Store compliance disclosures — Apple §3.1.1 / Google Play Billing. Transparency required. */}
+        {/* Store compliance disclosures . Apple §3.1.1 / Google Play Billing. Transparency required. */}
         {/* Explains p2p transfer fees and no real-world value. Legal requirement met with clarity. */}
         <View style={styles.disclosureBox}>
           <Text style={styles.disclosureTitle}>FEE DISCLOSURE</Text>
           <Text style={styles.disclosureText}>
             Bro Bucks purchases are processed through {Platform.OS === "ios" ? "Apple" : "Google Play"} In-App Purchase.{"\n\n"}
             When you send a Bro-nation (peer-to-peer), a 30% platform fee applies. The recipient receives 70% of the Bro Bucks you send.{"\n\n"}
-            Bro Bucks have no real-world monetary value and cannot be redeemed, transferred outside the app, or refunded except as required by applicable law.
-          </Text>
+            Bro Bucks have no real-world monetary value and cannot be redeemed, transferred outside the app, or refunded except as required by applicable law.          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>
