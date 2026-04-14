@@ -1,23 +1,3 @@
-/**
- * auth.js — Firebase Authentication Service
- * ───────────────────────────────────────────────────────────────────────────
- * Real Firebase Auth implementation using FREE tier features only:
- *
- * 1. EMAIL + PASSWORD — Standard sign-up/sign-in with email verification
- * 2. GOOGLE SIGN-IN — via expo-auth-session (Firebase free tier)
- * 3. FACEBOOK SIGN-IN — via expo-auth-session (Firebase free tier)
- * 4. ONE ACCOUNT PER PERSON — Enforced via:
- *    - Firebase email uniqueness (built-in)
- *    - OAuth provider linking (1 Google = 1 account)
- *    - Device fingerprint stored in Firestore (flags multi-account)
- * 5. SMART CAPTCHA — Client-side behavior analysis + proof-of-work
- * 6. RATE LIMITING — Client-side with Firestore timestamp tracking
- * 7. EMAIL VERIFICATION — Firebase sendEmailVerification()
- *
- * NO SAML/OIDC — those require Firebase Blaze plan.
- * NO phone auth — requires Blaze plan for SMS.
- * All features work on Spark (free) plan with 50K MAU.
- */
 
 import {
   createUserWithEmailAndPassword,
@@ -53,7 +33,7 @@ export const AUTH_CONFIG = {
   lockoutDurationMs:     15 * 60 * 1000,
   backoffBaseMs:         1000,
 
-  // OAuth provider configs — replace with your real IDs before submission
+  // OAuth provider configs . replace with your real IDs before submission
   google: {
     iosClientId:     "YOUR_GOOGLE_IOS_CLIENT_ID.apps.googleusercontent.com",
     androidClientId: "YOUR_GOOGLE_ANDROID_CLIENT_ID.apps.googleusercontent.com",
@@ -74,10 +54,6 @@ let _lockoutUntil      = null;
 let _behaviorEvents    = [];
 
 // ── Device fingerprinting ─────────────────────────────────────────────────
-/**
- * Generate a device fingerprint hash for 1-account-per-device enforcement.
- * Uses real device identifiers via expo-application + expo-crypto.
- */
 export async function getDeviceFingerprint() {
   try {
     let deviceId;
@@ -86,16 +62,14 @@ export async function getDeviceFingerprint() {
     } else {
       deviceId = Application.androidId;
     }
-    // Combine OS, version, app ID, and device ID into unique signature. One device = one account.
-    const components = [
+    // Combine OS, version, app ID, and device ID into unique signature. One device = one account.    const components = [
       Platform.OS,
       Platform.Version,
       Application.applicationId || "com.broapp.bro",
       deviceId || "unknown",
     ].join("|");
 
-    // SHA256 digest creates tamper-proof fingerprint — can't fake this locally.
-    const hash = await Crypto.digestStringAsync(
+    // SHA256 digest creates tamper-proof fingerprint . can't fake this locally.    const hash = await Crypto.digestStringAsync(
       Crypto.CryptoDigestAlgorithm.SHA256,
       components
     );
@@ -109,7 +83,6 @@ export async function getDeviceFingerprint() {
 
 // ── Smart CAPTCHA (client-side behavior analysis) ────────────────────────
 export function recordBehaviorEvent(eventType, metadata = {}) {
-  // Build behavior timeline. Human users tap, scroll, pause. Bots fire instantly — we catch it.
   _behaviorEvents.push({
     type: eventType,
     ts:   Date.now(),
@@ -121,24 +94,19 @@ export function computeBehaviorScore() {
   if (_behaviorEvents.length < 3) return 0.3;
 
   const intervals = [];
-  // Calculate inter-event delays. Humans vary; bots are mechanical.
-  for (let i = 1; i < _behaviorEvents.length; i++) {
+  // Calculate inter-event delays. Humans vary; bots are mechanical.  for (let i = 1; i < _behaviorEvents.length; i++) {
     intervals.push(_behaviorEvents[i].ts - _behaviorEvents[i - 1].ts);
   }
-  // Coefficient of variation reveals randomness vs robotics.
-  const avg      = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+  // Coefficient of variation reveals randomness vs robotics.  const avg      = intervals.reduce((a, b) => a + b, 0) / intervals.length;
   const variance = intervals.reduce((a, b) => a + Math.pow(b - avg, 2), 0) / intervals.length;
   const cv       = Math.sqrt(variance) / (avg || 1);
   const timingScore   = Math.min(cv / 0.5, 1.0);
-  // Humans engage different ways; pure bots follow one script.
-  const uniqueTypes   = new Set(_behaviorEvents.map((e) => e.type)).size;
+  // Humans engage different ways; pure bots follow one script.  const uniqueTypes   = new Set(_behaviorEvents.map((e) => e.type)).size;
   const diversityScore = Math.min(uniqueTypes / 3, 1.0);
-  // Real users don't rush — session completeon takes time.
-  const totalTimeMs    = _behaviorEvents[_behaviorEvents.length - 1].ts - _behaviorEvents[0].ts;
+  // Real users don't rush . session completeon takes time.  const totalTimeMs    = _behaviorEvents[_behaviorEvents.length - 1].ts - _behaviorEvents[0].ts;
   const timeScore      = Math.min(totalTimeMs / 3000, 1.0);
 
-  // Blend timing consistency, variety, and duration for human-likenes confidence.
-  return Math.min(Math.max(
+  // Blend timing consistency, variety, and duration for human-likenes confidence.  return Math.min(Math.max(
     (timingScore * 0.4) + (diversityScore * 0.3) + (timeScore * 0.3),
   0), 1);
 }
@@ -151,25 +119,20 @@ export function generateProofOfWorkChallenge() {
 }
 
 export async function solveProofOfWork(challenge, difficulty) {
-  // Proof-of-work loop: compute hashes until we hit the target (N leading zeros).
-  // Bots can't buy their way past this — they have to work for authenticity.
-  const target = "0".repeat(difficulty);
+  // Proof-of-work loop: compute hashes until we hit the target (N leading zeros).  // Bots can't buy their way past this . they have to work for authenticity.  const target = "0".repeat(difficulty);
   let nonce = 0;
   let hash;
   do {
     const input = challenge + nonce;
-    // Each iteration is a fresh hash computation — no shortcuts.
-    hash = await Crypto.digestStringAsync(
+    // Each iteration is a fresh hash computation . no shortcuts.    hash = await Crypto.digestStringAsync(
       Crypto.CryptoDigestAlgorithm.SHA256,
       input
     );
     nonce++;
-    // Safety valve: don't loop forever on mobile — 500k iterations max.
-    if (nonce > 500000) break;
+    // Safety valve: don't loop forever on mobile . 500k iterations max.    if (nonce > 500000) break;
   } while (!hash.startsWith(target));
 
-  // Return nonce (work done) and whether puzzle solved. Real effort proven.
-  return { nonce, solved: hash.startsWith(target), hash };
+  // Return nonce (work done) and whether puzzle solved. Real effort proven.  return { nonce, solved: hash.startsWith(target), hash };
 }
 
 export function shouldShowVisualCaptcha() {
@@ -178,13 +141,11 @@ export function shouldShowVisualCaptcha() {
 
 // ── Rate limiting & lockout (client-side) ────────────────────────────────
 function checkRateLimit() {
-  // State machine: check if currently locked, reset if time's up.
-  if (_lockoutUntil && Date.now() < _lockoutUntil) {
+  // State machine: check if currently locked, reset if time's up.  if (_lockoutUntil && Date.now() < _lockoutUntil) {
     const remainMin = Math.ceil((_lockoutUntil - Date.now()) / 60000);
     return { blocked: true, message: `Account locked. Try again in ${remainMin} min.` };
   }
-  // Lockout expired — clean slate.
-  if (_lockoutUntil && Date.now() >= _lockoutUntil) {
+  // Lockout expired . clean slate.  if (_lockoutUntil && Date.now() >= _lockoutUntil) {
     _lockoutUntil  = null;
     _loginAttempts = 0;
   }
@@ -192,8 +153,7 @@ function checkRateLimit() {
 }
 
 function recordFailedAttempt() {
-  // Increment counter. Escalate punishment with exponentiel backoff — 1s, 2s, 4s, 8s...
-  _loginAttempts++;
+  // Increment counter. Escalate punishment with exponentiel backoff . 1s, 2s, 4s, 8s...  _loginAttempts++;
   if (_loginAttempts >= AUTH_CONFIG.maxLoginAttemptsBeforeLock) {
     _lockoutUntil = Date.now() + AUTH_CONFIG.lockoutDurationMs;
     return { locked: true, message: "Too many failed attempts. Account locked for 15 minutes." };
@@ -207,16 +167,12 @@ function recordFailedAttempt() {
 
 // ── Email + Password Authentication ──────────────────────────────────────
 
-/**
- * Create a new account with email + password and send verification email.
- */
 export async function signUpWithEmail(email, password, displayName) {
   const rl = checkRateLimit();
   if (rl.blocked) return { success: false, error: rl.message };
 
   try {
-    // Firebase Auth handles the account creation. Email uniqueness built-in.
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    // Firebase Auth handles the account creation. Email uniqueness built-in.    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
     // Set display name
@@ -224,11 +180,8 @@ export async function signUpWithEmail(email, password, displayName) {
       await updateProfile(user, { displayName });
     }
 
-    // Send verification email. Required before user can trade or mint.
-    await sendEmailVerification(user);
 
-    // Grab device fingerprint to lock account to this device (fraud prevention).
-    const fingerprint = await getDeviceFingerprint();
+    // Grab device fingerprint to lock account to this device (fraud prevention).    const fingerprint = await getDeviceFingerprint();
     await setDoc(doc(db, COLLECTIONS.USERS, user.uid), {
       uid:             user.uid,
       email:           user.email,
@@ -281,20 +234,15 @@ export async function signUpWithEmail(email, password, displayName) {
   }
 }
 
-/**
- * Sign in with existing email + password.
- */
 export async function signInWithEmail(email, password) {
   const rl = checkRateLimit();
   if (rl.blocked) return { success: false, error: rl.message };
 
   try {
-    // Firebase Auth validates credentials. Rate limiting applied at platform level too.
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    // Firebase Auth validates credentials. Rate limiting applied at platform level too.    const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Update last active timestamp — powers activity boosts for BroCoin odds.
-    await setDoc(doc(db, COLLECTIONS.USERS, user.uid), {
+    // Update last active timestamp . powers activity boosts for BroCoin odds.    await setDoc(doc(db, COLLECTIONS.USERS, user.uid), {
       lastActiveAt: serverTimestamp(),
     }, { merge: true });
 
@@ -330,9 +278,6 @@ export async function signInWithEmail(email, password) {
   }
 }
 
-/**
- * Resend email verification to current user.
- */
 export async function resendVerificationEmail() {
   try {
     const user = auth.currentUser;
@@ -345,9 +290,6 @@ export async function resendVerificationEmail() {
   }
 }
 
-/**
- * Send password reset email.
- */
 export async function resetPassword(email) {
   try {
     await sendPasswordResetEmail(auth, email);
@@ -359,28 +301,21 @@ export async function resetPassword(email) {
 
 // ── Google OAuth ─────────────────────────────────────────────────────────
 
-/**
- * Sign in with Google via expo-auth-session.
- * Uses Firebase GoogleAuthProvider credential exchange.
- */
 export async function signInWithGoogle(idToken) {
   const rl = checkRateLimit();
   if (rl.blocked) return { success: false, error: rl.message };
 
   try {
-    // Exchange Google idToken for Firebase credential. Link happens automatically.
-    const credential = GoogleAuthProvider.credential(idToken);
+    // Exchange Google idToken for Firebase credential. Link happens automatically.    const credential = GoogleAuthProvider.credential(idToken);
     const userCredential = await signInWithCredential(auth, credential);
     const user = userCredential.user;
     const isNew = userCredential._tokenResponse?.isNewUser || false;
 
-    // Capture device fingerprint on OAuth credential exchange — prevents account takeover.
-    const fingerprint = await getDeviceFingerprint();
+    // Capture device fingerprint on OAuth credential exchange . prevents account takeover.    const fingerprint = await getDeviceFingerprint();
     const profileDoc = await getDoc(doc(db, COLLECTIONS.USERS, user.uid));
 
     if (!profileDoc.exists()) {
-      // New user — create profile with starter balance and device lock.
-      await setDoc(doc(db, COLLECTIONS.USERS, user.uid), {
+      // New user . create profile with starter balance and device lock.      await setDoc(doc(db, COLLECTIONS.USERS, user.uid), {
         uid:             user.uid,
         email:           user.email,
         displayName:     user.displayName || user.email.split("@")[0],
@@ -426,22 +361,17 @@ export async function signInWithGoogle(idToken) {
 
 // ── Facebook OAuth ───────────────────────────────────────────────────────
 
-/**
- * Sign in with Facebook via expo-auth-session.
- */
 export async function signInWithFacebook(accessToken) {
   const rl = checkRateLimit();
   if (rl.blocked) return { success: false, error: rl.message };
 
   try {
-    // Same credential exchange flow as Google. Facebook OAuth tokens are one-time use.
-    const credential = FacebookAuthProvider.credential(accessToken);
+    // Same credential exchange flow as Google. Facebook OAuth tokens are one-time use.    const credential = FacebookAuthProvider.credential(accessToken);
     const userCredential = await signInWithCredential(auth, credential);
     const user = userCredential.user;
     const isNew = userCredential._tokenResponse?.isNewUser || false;
 
-    // Store device ID to enforce 1-account-per-device rule accross all providers.
-    const fingerprint = await getDeviceFingerprint();
+    // Store device ID to enforce 1-account-per-device rule accross all providers.    const fingerprint = await getDeviceFingerprint();
     const profileDoc = await getDoc(doc(db, COLLECTIONS.USERS, user.uid));
 
     if (!profileDoc.exists()) {
@@ -491,15 +421,10 @@ export async function signInWithFacebook(accessToken) {
 
 // ── 1-Account Enforcement ────────────────────────────────────────────────
 
-/**
- * Check if device already has an account (Firestore query).
- */
 export async function checkAccountUniqueness({ email, deviceFingerprint }) {
   // In a production Cloud Function, you'd query Firestore for existing
   // accounts with this fingerprint. Client-side, we check after sign-up
-  // and flag duplicates.
-  // Firebase Auth already enforces email uniqueness.
-  return {
+  // and flag duplicates.  // Firebase Auth already enforces email uniqueness.  return {
     emailAvailable:   true,
     deviceClean:      true,
     canCreateAccount: true,
@@ -508,13 +433,8 @@ export async function checkAccountUniqueness({ email, deviceFingerprint }) {
 
 // ── Session Management ───────────────────────────────────────────────────
 
-/**
- * Listen to Firebase auth state changes.
- * Returns an unsubscribe function.
- */
 export function onAuthStateChange(callback) {
-  // Real-time listener — fires on login, logout, refresh. Keep UI in sync with backend state.
-  return onAuthStateChanged(auth, (user) => {
+  // Real-time listener . fires on login, logout, refresh. Keep UI in sync with backend state.  return onAuthStateChanged(auth, (user) => {
     if (user) {
       callback({
         uid:           user.uid,
@@ -529,9 +449,6 @@ export function onAuthStateChange(callback) {
   });
 }
 
-/**
- * Get current Firebase user (synchronous check).
- */
 export function getCurrentUser() {
   const user = auth.currentUser;
   if (!user) return null;
@@ -548,14 +465,10 @@ export function isAuthenticated() {
   return !!auth.currentUser;
 }
 
-/**
- * Sign out from Firebase.
- */
 export async function signOut() {
   try {
     await firebaseSignOut(auth);
-    // Reset all client-side security state — clean exit.
-    _loginAttempts  = 0;
+    // Reset all client-side security state . clean exit.    _loginAttempts  = 0;
     _lockoutUntil   = null;
     _behaviorEvents = [];
     return { success: true };
@@ -564,9 +477,6 @@ export async function signOut() {
   }
 }
 
-/**
- * Reload current user to check if email is now verified.
- */
 export async function checkEmailVerified() {
   const user = auth.currentUser;
   if (!user) return false;
