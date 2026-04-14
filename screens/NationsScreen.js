@@ -1,10 +1,3 @@
-/**
- * NationsScreen
- *
- * Bro-nations: real-money tippping via Apple Pay. Support your dev bro with intent.
- * Tier selection, haptic feedback confirmation, seamless payment flow. Premium,
- * frictionless. For anyone who wants to give back. Drive real suport for your devs.
- */
 
 import React, { useState } from "react";
 import {
@@ -14,11 +7,9 @@ import * as Haptics from "expo-haptics";
 import { DONATION_TIERS } from "../constants/bro";
 
 export default function NationsScreen({ showToast }) {
-  // Selected tier state: tracks which donation level user chooses.
-  const [selectedTier, setSelectedTier] = useState(null);
+  // Selected tier state: tracks which donation level user chooses.  const [selectedTier, setSelectedTier] = useState(null);
 
-  // Execute donation: haptic feedback + toast notification + reset selection.
-  const doDonate = () => {
+  // Execute donation: haptic feedback + toast notification + reset selection.  const doDonate = () => {
     if (!selectedTier) return;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     showToast(`Bro-nation of $${selectedTier.amount.toFixed(2)} sent! Thanks bro 🤜`);
@@ -56,7 +47,7 @@ export default function NationsScreen({ showToast }) {
           </TouchableOpacity>
         )}
       />
-      {/* Apple Pay button: payment gateway. Disabled until tier selection. Drive checkout momentum. */}
+      {/* Apple Pay button: payment . Disabled until tier selection. Drive checkout momentum. */}
       <TouchableOpacity
         style={[styles.applePayBtn, !selectedTier && { opacity:0.2 }]}
         onPress={doDonate}
