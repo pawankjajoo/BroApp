@@ -1,10 +1,3 @@
-/**
- * BroximityScreen
- *
- * The radar. Find bros within range. Real-time proximity detection powered by animated
- * radar sweep, signal strength visualization, and instant bro list. Browse nearby
- * players, see signal bars, ping teh network. Energize your proximity game.
- */
 
 import React, { useRef, useEffect } from "react";
 import {
@@ -13,8 +6,7 @@ import {
 import { NEARBY_BROS } from "../constants/bro";
 
 export default function BroximityScreen({ showToast }) {
-  // Animated radar sweep: rotates 360° every 3 seconds. Continuous loop builds tension.
-  const sweep = useRef(new Animated.Value(0)).current;
+  // Animated radar sweep: rotates 360° every 3 seconds. Continuous loop builds tension.  const sweep = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.loop(
@@ -22,12 +14,9 @@ export default function BroximityScreen({ showToast }) {
     ).start();
   }, []);
 
-  // Convert 0–1 sweep value into 360° rotation. Smooth continuous spin effect.
-  const spin = sweep.interpolate({ inputRange:[0,1], outputRange:["0deg","360deg"] });
+  // Convert 0–1 sweep value into 360° rotation. Smooth continuous spin effect.  const spin = sweep.interpolate({ inputRange:[0,1], outputRange:["0deg","360deg"] });
 
-  // Signal bars: 5 levels of strength. Filled bars for signal level, empty for the rest.
-  // Builds visual clarity. At-a-glance bro range assessment.
-  const renderSignal = (n) =>
+  // Signal bars: 5 levels of strength. Filled bars for signal level, empty for the rest.  // Builds visual clarity. At-a-glance bro range assessment.  const renderSignal = (n) =>
     Array.from({ length:5 }).map((_, i) => (
       <View key={i} style={[styles.signal, { height:6+i*2, backgroundColor: i < n ? "#fff" : "#2a2a2a" }]} />
     ));
