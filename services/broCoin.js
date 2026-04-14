@@ -1,23 +1,3 @@
-/**
- * broCoin.js — BroCoin Platform Reward System (Firebase-backed)
- * ───────────────────────────────────────────────────────────────────────────
- *
- * PRIVACY-FIRST DESIGN:
- *   - Balances stored in private Firestore docs (owner-only read via rules)
- *   - Public ledger uses anonymized hashes — no user identity exposed
- *   - Treasury and pricing computed from Firestore singleton
- *
- * MINTING:
- *   - Every $1,000 in total platform transactions → 1 BroCoin minted
- *   - Weighted random selection from verified-email users
- *   - All mint logic should run in a Cloud Function in production
- *   - Client-side simulation here for Expo testing / demo
- *
- * TREASURY:
- *   - 5% of platform fees deposited into reserve
- *   - Price = Treasury ÷ Total Minted
- *   - One-way trading: BRO → BB only
- */
 
 import {
   doc, setDoc, getDoc, getDocs, updateDoc,
@@ -29,9 +9,7 @@ import { db, COLLECTIONS, SINGLETON_DOCS } from "./firebase";
 import { BROCOIN_CONFIG } from "../constants/bro";
 
 // ── Local state for demo / Expo Go testing ─────────────────────────────────
-// In production, all minting logic runs in Cloud Functions.
-// These local values mirror Firestore for instant UI updates.
-let _localTreasury = {
+// In production, all minting logic runs in Cloud Functions.// These local values mirror Firestore for instant UI updates.let _localTreasury = {
   globalTransactionsBB: 0,
   treasuryReserveBB:    0,
   totalBroCoinsMinted:  0,
@@ -45,14 +23,12 @@ let _ledgerSalt     = "bro_salt_" + Date.now();
 
 async function anonymizeRecipient(recipientUid) {
   try {
-    // One-way hash: uid + daily salt. Same uid = same hash per day, but unrecoverable.
-    const raw = `${_ledgerSalt}_${recipientUid}_${Math.floor(Date.now() / 86400000)}`;
+    // One-way hash: uid + daily salt. Same uid = same hash per day, but unrecoverable.    const raw = `${_ledgerSalt}_${recipientUid}_${Math.floor(Date.now() / 86400000)}`;
     const hash = await Crypto.digestStringAsync(
       Crypto.CryptoDigestAlgorithm.SHA256,
       raw
     );
-    // Trim to 0x XXXXXX...XXXX format — readable but not exploitable.
-    return "0x" + hash.slice(0, 12) + "..." + hash.slice(-6);
+    // Trim to 0x XXXXXX...XXXX format . readable but not exploitable.    return "0x" + hash.slice(0, 12) + "..." + hash.slice(-6);
   } catch (e) {
     // Fallback for Expo Go (no native crypto)
     let h = 0;
@@ -61,22 +37,16 @@ async function anonymizeRecipient(recipientUid) {
       h = ((h << 5) - h) + s.charCodeAt(i);
       h |= 0;
     }
-    // Polyfill anonymization using simple hash — privacy first, always.
-    return "0x" + Math.abs(h).toString(16).padStart(8, "0") + "..." +
+    // Polyfill anonymization using simple hash . privacy first, always.    return "0x" + Math.abs(h).toString(16).padStart(8, "0") + "..." +
            Math.abs(h * 31).toString(16).padStart(4, "0");
   }
 }
 
 // ── Initialize from Firestore ──────────────────────────────────────────────
 
-/**
- * Load treasury state from Firestore into local cache.
- * Call on app mount.
- */
 export async function initBroCoinState() {
   try {
-    // Treasury is single doc — easy sync. Contains reserve, mint count, transaction volume.
-    const treasurySnap = await getDoc(
+    // Treasury is single doc . easy sync. Contains reserve, mint count, transaction volume.    const treasurySnap = await getDoc(
       doc(db, COLLECTIONS.TREASURY, SINGLETON_DOCS.TREASURY_STATE)
     );
     if (treasurySnap.exists()) {
@@ -88,8 +58,7 @@ export async function initBroCoinState() {
       };
     }
 
-    // Load public ledger — anonymized mint history, newest first.
-    const ledgerQ = query(
+    // Load public ledger . anonymized mint history, newest first.    const ledgerQ = query(
       collection(db, COLLECTIONS.BROCOIN_LEDGER),
       orderBy("ts", "desc"),
       limit(50)
@@ -101,9 +70,6 @@ export async function initBroCoinState() {
   }
 }
 
-/**
- * Listen to treasury changes in real-time.
- */
 export function onTreasuryUpdate(callback) {
   return onSnapshot(
     doc(db, COLLECTIONS.TREASURY, SINGLETON_DOCS.TREASURY_STATE),
@@ -123,30 +89,19 @@ export function onTreasuryUpdate(callback) {
 
 // ── Transaction Recording & Minting ────────────────────────────────────────
 
-/**
- * Record a platform transaction and check for mint threshold.
- * In production, this ENTIRE function should be a Cloud Function
- * triggered by Firestore writes to the transactions collection.
- *
- * For Expo testing, we run it client-side with optimistic local updates.
- */
 export async function recordTransaction(amountBB, txType = "purchase", platformFeeBB = 0) {
-  // Optimistic local update — instant UI feedback, async persist later.
-  _localTreasury.globalTransactionsBB += amountBB;
+  // Optimistic local update . instant UI feedback, async persist later.  _localTreasury.globalTransactionsBB += amountBB;
   if (platformFeeBB > 0) {
-    // 5% of platform fees flow to treasury — funds the mint.
-    const treasuryDeposit = Math.floor(platformFeeBB * BROCOIN_CONFIG.treasuryFeeRate);
+    // 5% of platform fees flow to treasury . funds the mint.    const treasuryDeposit = Math.floor(platformFeeBB * BROCOIN_CONFIG.treasuryFeeRate);
     _localTreasury.treasuryReserveBB += treasuryDeposit;
   }
 
-  // Check mint threshold loop — every $1k = 1 BroCoin (or $1M BB).
-  const threshold = BROCOIN_CONFIG.mintThresholdBB;
+  // Check mint threshold loop . every $1k = 1 BroCoin (or $1M BB).  const threshold = BROCOIN_CONFIG.mintThresholdBB;
   let mintResult = null;
 
   while (_localTreasury.globalTransactionsBB >= threshold) {
     _localTreasury.globalTransactionsBB -= threshold;
-    // Trigger mint if eligible. Weighted random selection favors active users.
-    mintResult = await _mintBroCoin();
+    // Trigger mint if eligible. Weighted random selection favors active users.    mintResult = await _mintBroCoin();
   }
 
   // Persist to Firestore (async, non-blocking for UI)
@@ -182,14 +137,11 @@ async function _mintBroCoin() {
     return { minted: true, recipient: null, held: true };
   }
 
-  // Select winner using weighted algorithm. Rewards engagement & trustworthiness.
-  const { selected, weightSnapshot } = _weightedRandomSelect(pool);
+  // Select winner using weighted algorithm. Rewards engagement & trustworthiness.  const { selected, weightSnapshot } = _weightedRandomSelect(pool);
 
-  // Award BroCoin (local + Firestore). Private wallets prevent front-running.
-  _localWallet[selected.uid] = (_localWallet[selected.uid] || 0) + 1;
+  // Award BroCoin (local + Firestore). Private wallets prevent front-running.  _localWallet[selected.uid] = (_localWallet[selected.uid] || 0) + 1;
 
-  // Persist wallet to Firestore async — no blocking.
-  try {
+  // Persist wallet to Firestore async . no blocking.  try {
     await setDoc(
       doc(db, COLLECTIONS.BROCOIN_WALLETS, selected.uid),
       { balance: increment(1), lastMintAt: serverTimestamp() },
@@ -199,8 +151,9 @@ async function _mintBroCoin() {
     console.warn("[BroCoin] wallet persist failed:", e.message);
   }
 
-  // Create anonymized public ledger entry. Hides recipient, shows transparancy.
+  // Anonymize recipient for public ledger
   const recipientHash = await anonymizeRecipient(selected.uid);
+
   const ledgerEntry = {
     id:              `BRO-${String(milestone).padStart(6, "0")}`,
     ts:              Date.now(),
@@ -214,8 +167,7 @@ async function _mintBroCoin() {
   };
   _localLedger.unshift(ledgerEntry);
 
-  // Persist ledger entry to Firestore — immutable record for auditing.
-  try {
+  // Persist ledger entry to Firestore . immutable record for auditing.  try {
     await setDoc(
       doc(db, COLLECTIONS.BROCOIN_LEDGER, ledgerEntry.id),
       { ...ledgerEntry, createdAt: serverTimestamp() }
@@ -234,7 +186,7 @@ async function _mintBroCoin() {
     console.warn("[BroCoin] treasury mint count persist failed:", e.message);
   }
 
-  // Notify listeners (private — only winner gets details)
+  // Notify listeners (private . only winner gets details)
   const privateRecord = {
     ts:            Date.now(),
     milestone,
@@ -253,8 +205,7 @@ function _weightedRandomSelect(pool) {
   const wf = BROCOIN_CONFIG.weightFactors;
   let totalWeight = 0;
 
-  // Apply multipliers: base (verified email only) × profile × activity × bronations.
-  const weighted = pool.map((user) => {
+  // Apply multipliers: base (verified email only) × profile × activity × bronations.  const weighted = pool.map((user) => {
     let w = wf.hasVerifiedEmail;
     if (user.profileComplete)  w *= wf.hasProfileComplete;
     if (user.activeRecently)   w *= wf.activeInLast30Days;
@@ -263,8 +214,7 @@ function _weightedRandomSelect(pool) {
     return { ...user, weight: w };
   });
 
-  // Snapshot the odds — transparent, auditable selection criteria.
-  const weightSnapshot = {
+  // Snapshot the odds . transparent, auditable selection criteria.  const weightSnapshot = {
     totalEligible:   pool.length,
     totalWeight:     Math.round(totalWeight * 1000) / 1000,
     avgWeight:       Math.round((totalWeight / pool.length) * 1000) / 1000,
@@ -274,8 +224,7 @@ function _weightedRandomSelect(pool) {
     selectionMethod: "weighted roulette wheel",
   };
 
-  // Roulette wheel selection. Spin proportional to individual weights.
-  let r = Math.random() * totalWeight;
+  // Roulette wheel selection. Spin proportional to individual weights.  let r = Math.random() * totalWeight;
   for (const user of weighted) {
     r -= user.weight;
     if (r <= 0) return { selected: user, weightSnapshot };
@@ -283,11 +232,6 @@ function _weightedRandomSelect(pool) {
   return { selected: weighted[weighted.length - 1], weightSnapshot };
 }
 
-/**
- * Get verified users eligible for BroCoin minting.
- * In production, this queries Firestore. For demo, uses mock data
- * that mirrors the demo user pool.
- */
 async function _getVerifiedUserPool() {
   try {
     // Try Firestore first
@@ -311,7 +255,7 @@ async function _getVerifiedUserPool() {
       });
     }
   } catch (e) {
-    // Firestore not available — fall through to mock
+    // Firestore not available . fall through to mock
   }
 
   // Fallback mock pool for demo/testing
@@ -369,21 +313,18 @@ export async function tradeBroCoinsForBB(userId, broCoinAmount) {
     return { success: false, error: "Not enough BroCoins, bro." };
   }
 
-  // One-way trading: BRO → BB. Price discovery via treasury formula (reserve ÷ total minted).
-  const priceBB = getBroCoinPriceBB();
+  // One-way trading: BRO → BB. Price discovery via treasury formula (reserve ÷ total minted).  const priceBB = getBroCoinPriceBB();
   if (priceBB === 0) {
-    return { success: false, error: "BroCoin has no value yet — treasury is empty." };
+    return { success: false, error: "BroCoin has no value yet . treasury is empty." };
   }
 
   const bbReceived = priceBB * broCoinAmount;
 
-  // Local update — instant. Persist async.
-  _localWallet[userId] -= broCoinAmount;
+  // Local update . instant. Persist async.  _localWallet[userId] -= broCoinAmount;
   _localTreasury.treasuryReserveBB -= bbReceived;
   if (_localTreasury.treasuryReserveBB < 0) _localTreasury.treasuryReserveBB = 0;
 
-  // Persist to Firestore — atomic updates acros three collections.
-  try {
+  // Persist to Firestore . atomic updates acros three collections.  try {
     await updateDoc(doc(db, COLLECTIONS.BROCOIN_WALLETS, userId), {
       balance: increment(-broCoinAmount),
     });
@@ -413,9 +354,6 @@ export function getMyBroCoins(userId = "demo_0") {
   return _localWallet[userId] || 0;
 }
 
-/**
- * Load BroCoin balance from Firestore.
- */
 export async function loadMyBroCoins(uid) {
   try {
     const snap = await getDoc(doc(db, COLLECTIONS.BROCOIN_WALLETS, uid));
@@ -481,7 +419,7 @@ export function getGlobalStats() {
       fullyBoosted: ((wf.hasVerifiedEmail * wf.hasProfileComplete * wf.activeInLast30Days * wf.hasSentBroNation / totalWeight) * 100).toFixed(2),
     },
     formula: {
-      base:          `${wf.hasVerifiedEmail}x (verified email — required)`,
+      base:          `${wf.hasVerifiedEmail}x (verified email . required)`,
       profileBoost:  `${wf.hasProfileComplete}x (+${((wf.hasProfileComplete - 1) * 100).toFixed(0)}% if profile complete)`,
       activityBoost: `${wf.activeInLast30Days}x (+${((wf.activeInLast30Days - 1) * 100).toFixed(0)}% if active in last 30 days)`,
       broNationBoost:`${wf.hasSentBroNation}x (+${((wf.hasSentBroNation - 1) * 100).toFixed(0)}% if sent a bro-nation)`,
