@@ -1,22 +1,6 @@
 /**
  * App.js
- * ═══════════════════════════════════════════════════════════════════════════════
- *
- * THE COMMAND CENTER.
- *
- * App.js is the central orchestrator for the entire Bro experiance. It owns:
- * • Font loading and app readiness
- * • Firebase authentication gate
- * • Global state: auth, bros, messages, wallet, profile
- * • Notification & toast lifecycle
- * • IAP (in-app purchases) integration
- * • The heartbeat: simulated incoming bro notifications
- * • Navigation & tab system
- * • Real-time mint listeners & bronation flows
- *
- * Everything flows through here. This is where the magic happens.
- *
- * Crafted by Pawan K Jajoo
+ * Root app component. Manages auth, navigation, state, notifications, and IAP.
  */
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
@@ -56,10 +40,7 @@ import {
 
 SplashScreenExpo.preventAutoHideAsync();
 
-// ─────────────────────────────────────────────────────────────────────────────
 // TAB NAVIGATION SYSTEM
-// Build your bro empire across 6 dimensions. Every tab is your launchpad.
-// ─────────────────────────────────────────────────────────────────────────────
 const TABS = [
   { key:"home",      icon:"🤜", label:"Bros"       },
   { key:"brocast",   icon:"📡", label:"Bro-cast"   },
@@ -85,21 +66,15 @@ export default function App() {
   const [toastMsg, setToastMsg]       = useState(null);
   const [notifMsg, setNotifMsg]       = useState(null);
 
-  // ─────────────────────────────────────────────────────────────────────
-  // Bro Bucks wallet state. Your currency. Your power.
-  // ─────────────────────────────────────────────────────────────────────
+  // Bro Bucks wallet state
   const [broBucks, setBroBucks]         = useState(25_000);
   const [storeProducts, setStoreProducts] = useState([]);
   const [purchasing, setPurchasing]     = useState(false);
 
-  // ─────────────────────────────────────────────────────────────────────
-  // Publisher revenue tracking. Watch the momentum grow.
-  // ─────────────────────────────────────────────────────────────────────
+  // Publisher revenue tracking
   const [publisherRevenueBB, setPublisherRevenueBB] = useState(0);
 
-  // ─────────────────────────────────────────────────────────────────────
-  // User profile. Your identity on the Bro network. Make it count.
-  // ─────────────────────────────────────────────────────────────────────
+  // User profile state
   const [userProfile, setUserProfile] = useState({
     displayName: "Big Bro",
     handle: "@bigbro",
@@ -108,14 +83,11 @@ export default function App() {
     interestingThing: "",
   });
 
-  // Animation references. Smooth, responsive, premium.
+  // Animation references
   const toastAnim  = useRef(new Animated.Value(0)).current;
   const notifAnim  = useRef(new Animated.Value(-80)).current;
 
-  // ─────────────────────────────────────────────────────────────────────
   // APP BOOTSTRAP: Font loading & splash screen
-  // When fonts arrive, hide splash. App is ready. Go.
-  // ─────────────────────────────────────────────────────────────────────
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreenExpo.hideAsync();
@@ -123,11 +95,7 @@ export default function App() {
     }
   }, [fontsLoaded]);
 
-  // ─────────────────────────────────────────────────────────────────────
-  // FIREBASE AUTH GATE
-  // Listen for login. On success: populate profile, register notifications,
-  // prime the wallet, clear badges. This is where the user enters the arena.
-  // ─────────────────────────────────────────────────────────────────────
+  // FIREBASE AUTH GATE: Listen for auth state changes
   useEffect(() => {
     if (!appReady) return;
 
@@ -146,16 +114,16 @@ export default function App() {
           setUserProfile((p) => ({ ...p, avatarUri: user.photoUrl }));
         }
 
-        // Arm push notifications. Stay connected. Never miss a bro.
+        // Register push notifications
         registerForPushNotifications(user.uid).catch(() => {});
 
-        // Load BroCoin state from Firestore. Your cryptographic earnings await.
+        // Load BroCoin state from Firestore
         initBroCoinState().catch(() => {});
 
-        // Clear any lingering badge counts. Fresh start, bro.
+        // Clear badge counts
         clearBadge().catch(() => {});
       } else {
-        // Logged out. Clear eveything.
+        // Logged out. Clear state.
         setAuthUser(null);
         setIsAuthed(false);
       }
@@ -164,10 +132,7 @@ export default function App() {
     return () => unsubAuth();
   }, [appReady]);
 
-  // ─────────────────────────────────────────────────────────────────────
-  // NOTIFICATION ROUTING
-  // User taps a notfication banner. Route to the right screen. Immediate.
-  // ─────────────────────────────────────────────────────────────────────
+  // NOTIFICATION ROUTING: Route tapped notifications to correct screen
   useEffect(() => {
     if (!appReady) return;
     const unsub = onNotificationTapped((data) => {
@@ -178,38 +143,27 @@ export default function App() {
     return unsub;
   }, [appReady]);
 
-  // ─────────────────────────────────────────────────────────────────────
-  // REAL-TIME MINT LISTENER
-  // BroCoin minted somewhere in the network? You get alerted instantly.
-  // Your rewards appear in real time. Celebrate every milestone.
-  // ─────────────────────────────────────────────────────────────────────
+  // REAL-TIME MINT LISTENER: Alert on BroCoin mints
   useEffect(() => {
     if (!appReady) return;
     const unsub = onMint((record) => {
       const myUid = authUser?.uid || "demo_0";
       if (record.recipientId === myUid) {
-        // You won! Drop the banner. Flash teh alert.
         showNotif(`🪙 YOU WON A BROCOIN! Check your wallet.`);
         showToast("🪙 BroCoin dropped into your wallet!");
       } else {
-        // Network milestone. Another verified bro leveled up.
         showNotif(`🪙 BroCoin #${record.milestone} minted! A verified bro was rewarded.`);
       }
     });
     return unsub;
   }, [appReady, authUser]);
 
-  // ─────────────────────────────────────────────────────────────────────
   // IAP (IN-APP PURCHASE) INITIALIZATION
-  // Monetize. Setup purchase callbacks, load product catalog. Anything is
-  // possible when you own your economy.
-  // ─────────────────────────────────────────────────────────────────────
   useEffect(() => {
     if (!appReady) return;
 
     IAPService.init({
       onPurchaseSuccess: (pack) => {
-        // Payment processed. Bro Bucks land in wallet. Transaction recorded.
         setPurchasing(false);
         setBroBucks((prev) => prev + pack.bucks);
         recordTransaction(pack.bucks, "purchase");
@@ -217,13 +171,11 @@ export default function App() {
         showNotif(`Bro Bucks purchased: ${pack.displayBB} 💰`);
       },
       onPurchaseError: (err) => {
-        // Transaction failed. Reassure the user. Try again.
         setPurchasing(false);
         showToast("Purchase failed. Try again, bro 😤");
         console.warn("[IAP] error:", err);
       },
     }).then(async () => {
-      // Load store inventory. Display what's for sale.
       const products = await IAPService.getStoreProducts();
       setStoreProducts(products);
     });
@@ -231,21 +183,13 @@ export default function App() {
     return () => IAPService.destroy();
   }, [appReady]);
 
-  // ─────────────────────────────────────────────────────────────────────
-  // DEMO HEARTBEAT: Simulated incoming bro notifications
-  // The network pulses. Every 7 seconds, a bro reaches out. A bro-cast
-  // lands. A bronation arrives. This is teh lifeblood of the demo.
-  // Realistic activity. Engagement. For the driven.
-  // ─────────────────────────────────────────────────────────────────────
+  // DEMO HEARTBEAT: Simulated incoming notifications every 7 seconds
   useEffect(() => {
     if (!appReady || showSplash) return;
     const interval = setInterval(() => {
-      // Pick a random bro from your network.
       const b    = INITIAL_BROS[Math.floor(Math.random() * INITIAL_BROS.length)];
       const expr = randomExpr();
-      // Variety: they're sending bro expressions, bro-casting, or donating.
       const types = [expr.label, "bro-casted", `bro-nation'd you 10K BB 💰`];
-      // Notify. Update their unread count. Mark as "Just now".
       showNotif(`${b.name}: ${types[Math.floor(Math.random() * types.length)]}`);
       setBros((prev) => prev.map((x) =>
         x.id === b.id ? { ...x, unread: x.unread + 1, lastBro: "Just now" } : x
@@ -254,14 +198,9 @@ export default function App() {
     return () => clearInterval(interval);
   }, [appReady, showSplash]);
 
-  // ─────────────────────────────────────────────────────────────────────
   // TOAST & IN-APP NOTIFICATION ANIMATION HELPERS
-  // Toast: bottom popup, fade in/out. Ephemeral feedback. Simple, elegant.
-  // Notification: top banner, spring arrival, graceful exit. Premium feel.
-  // ─────────────────────────────────────────────────────────────────────
   const showToast = useCallback((msg) => {
     setToastMsg(msg);
-    // Fade in (250ms), hold (2.2s), fade out (300ms). Clean lifecycle.
     Animated.sequence([
       Animated.timing(toastAnim, { toValue:1, duration:250, useNativeDriver:true }),
       Animated.delay(2200),
@@ -271,7 +210,6 @@ export default function App() {
 
   const showNotif = useCallback((msg) => {
     setNotifMsg(msg);
-    // Spring down from above (premium bounce), hold (3.2s), slide up. Energize.
     Animated.sequence([
       Animated.spring(notifAnim, { toValue:0, friction:8, tension:80, useNativeDriver:true }),
       Animated.delay(3200),
@@ -279,97 +217,71 @@ export default function App() {
     ]).start(() => setNotifMsg(null));
   }, [notifAnim]);
 
-  // ─────────────────────────────────────────────────────────────────────
   // IAP PURCHASE HANDLER
-  // User taps a product. Initiate purchase. Flag as loading.
-  // ─────────────────────────────────────────────────────────────────────
   const handlePurchasePack = useCallback((productId) => {
     setPurchasing(productId);
     IAPService.purchase(productId);
   }, []);
 
-  // ─────────────────────────────────────────────────────────────────────
   // CHAT FLOW ORCHESTRATION
-  // Browse, design, energize. Open a chat window. Clear unread. Enter.
-  // ─────────────────────────────────────────────────────────────────────
   const openChat = (bro) => {
-    // Activate this bro. Zero their unread. Show the chat screen.
     setActiveBro(bro);
     setBros((prev) => prev.map((b) => b.id === bro.id ? { ...b, unread:0 } : b));
     setInChat(true);
   };
 
-  // Send a bro expression. Your sentiment travels instantly.
   const handleSendBro = (expr, from = "me") => {
     if (!activeBro) return;
     const id = Date.now() + Math.random();
-    // Append to the message thread for this bro. Timestamp: Just now.
     setMessages((prev) => ({
       ...prev,
       [activeBro.id]: [...(prev[activeBro.id] || []),
         { id, from, type:"bro", expr, time:"Just now" }
       ],
     }));
-    // If you sent it, increment your bro count. Recognition unlocked.
     if (from === "me") setBroCount((c) => c + 1);
   };
 
-  // Send a bronation. Real money moves. Real impact.
   const handleSendNation = (bro, bucksAmount) => {
-    // Validate wallet. Prevent overdraft.
     if (broBucks < bucksAmount) {
       showToast("Not enough Bro Bucks, bro! Top up in the wallet 💰");
       return false;
     }
     const id          = Date.now() + Math.random();
-    // Calculate fees. Split the transaction. Transparant.
     const fee         = calcPlatformFee(bucksAmount);
     const recipientBB = calcRecipientAmount(bucksAmount);
 
-    // Debit your account. Credit the platform. Record it all.
     setBroBucks((prev) => prev - bucksAmount);
     setPublisherRevenueBB((prev) => prev + fee);
     recordTransaction(bucksAmount, "bronation", fee);
-    // Append the transaction message to the thread.
     setMessages((prev) => ({
       ...prev,
       [bro.id]: [...(prev[bro.id] || []),
         { id, from:"me", type:"nation", bucks:bucksAmount, recipientBucks:recipientBB, fee, time:"Just now" }
       ],
     }));
-    // Update the bro's total receipts.
     setBros((prev) => prev.map((b) =>
       b.id === bro.id ? { ...b, broNationsBB: b.broNationsBB + recipientBB } : b
     ));
     return true;
   };
 
-  // Send a bro-cast. Broadcast your expression to your entire network.
   const handleBrocast = (expr) => {
-    // Multiply your bro count by network size. Reach amplified.
     setBroCount((c) => c + bros.length);
     showToast(`"${expr.label}" bro-cast sent to all your bros! 📡`);
   };
 
-  // ─────────────────────────────────────────────────────────────────────
   // PRIMARY RENDER DECISION TREE
-  // Bootstrap → Auth gate → Splash → App. For the driven.
-  // ─────────────────────────────────────────────────────────────────────
 
-  // Wait for fonts and app state.
   if (!appReady) return null;
 
-  // ─────────────────────────────────────────────────────────────────────
-  // AUTH GATE: No entry without authentication
-  // If logged out, show login screen. Anything is possible after you sign in.
-  // ─────────────────────────────────────────────────────────────────────
+  // AUTH GATE
   if (!isAuthed) {
     return (
       <>
         <StatusBar barStyle="light-content" backgroundColor="#0d0d0d" />
         <AuthScreen
           onAuthSuccess={(user, session) => {
-            // User crossed the gate. Populate state. Unlock the app.
             setAuthUser(user);
             setIsAuthed(true);
             if (user.displayName) setUserProfile((p) => ({ ...p, displayName: user.displayName }));
@@ -382,7 +294,6 @@ export default function App() {
     );
   }
 
-  // Show the splash screen once. Build momentum. Then transition to app.
   if (showSplash) {
     return (
       <>
@@ -392,13 +303,8 @@ export default function App() {
     );
   }
 
-  // ─────────────────────────────────────────────────────────────────────
   // DYNAMIC RENDER TREE
-  // Select active screen based on navigation state. Each screen receives
-  // everything it needs: data, callbacks, toast & notif helpers.
-  // ─────────────────────────────────────────────────────────────────────
   const renderScreen = () => {
-    // Chat mode active. Show the conversation thread instead of tabs.
     if (inChat && activeBro) {
       return (
         <ChatScreen
@@ -413,7 +319,6 @@ export default function App() {
         />
       );
     }
-    // Tab navigation. Choose your destination.
     switch (tab) {
       case "home":      return <HomeScreen bros={bros} onOpenChat={openChat} />;
       case "brocast":   return <BrocastScreen broCount={broCount} onBrocast={handleBrocast} />;
@@ -446,7 +351,6 @@ export default function App() {
           onUpdateProfile={(updates) => setUserProfile((p) => ({ ...p, ...updates }))}
           onNavigate={(t) => setTab(t)}
           onSignOut={async () => {
-            // Sign out. Reset all state. Return to auth gate.
             await signOut();
             setIsAuthed(false);
             setAuthUser(null);
@@ -458,20 +362,13 @@ export default function App() {
     }
   };
 
-  // ─────────────────────────────────────────────────────────────────────
   // MAIN APP LAYOUT
-  // Screen content + tab bar + balance indicator + notification layer.
-  // Everything orchestrated from one root view.
-  // ─────────────────────────────────────────────────────────────────────
   return (
     <View style={styles.root}>
       <StatusBar barStyle="light-content" backgroundColor="#0d0d0d" />
       <View style={{ flex:1 }}>{renderScreen()}</View>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          TAB BAR NAVIGATION
-          Hidden in chat mode. Six tabs. Six pathways. Ready to explore.
-          ══════════════════════════════════════════════════════════════════ */}
+      {/* TAB BAR NAVIGATION */}
       {!inChat && (
         <View style={styles.tabBar}>
           {TABS.map((t) => (
@@ -488,11 +385,7 @@ export default function App() {
         </View>
       )}
 
-      {/* ══════════════════════════════════════════════════════════════════
-          BRO BUCKS BALANCE PILL
-          Always visible (unless in chat). Quick access. Tap to top up.
-          Your economy at a glance.
-          ══════════════════════════════════════════════════════════════════ */}
+      {/* BRO BUCKS BALANCE PILL */}
       {!inChat && broBucks > 0 && (
         <TouchableOpacity
           style={styles.bbPill}
@@ -503,11 +396,7 @@ export default function App() {
         </TouchableOpacity>
       )}
 
-      {/* ══════════════════════════════════════════════════════════════════
-          IN-APP NOTIFICATION OVERLAY
-          Top banner. Springs down. Recieved live activity updates.
-          BroCoin drops. Bronations land. Bro-casts arrive. Energize.
-          ══════════════════════════════════════════════════════════════════ */}
+      {/* IN-APP NOTIFICATION OVERLAY */}
       {notifMsg && (
         <Animated.View style={[styles.notif, { transform:[{ translateY:notifAnim }] }]}>
           <Text style={{ fontSize:22 }}>💪</Text>
@@ -518,11 +407,7 @@ export default function App() {
         </Animated.View>
       )}
 
-      {/* ══════════════════════════════════════════════════════════════════
-          TOAST NOTIFICATION
-          Bottom center. Ephemeral feedback. Confirmations, errors, wins.
-          Fades in. Fades out. Clean & purposeful.
-          ══════════════════════════════════════════════════════════════════ */}
+      {/* TOAST NOTIFICATION */}
       {toastMsg && (
         <Animated.View style={[styles.toast, { opacity:toastAnim }]}>
           <Text style={styles.toastTxt}>{toastMsg}</Text>
