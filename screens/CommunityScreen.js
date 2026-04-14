@@ -1,10 +1,3 @@
-/**
- * CommunityScreen
- *
- * The global bro feed. Social proof in action. Real-time activity stream of fellow
- * players: who's leveling up, who's winning, who's here. Maximalist transparency.
- * Builds momentum. For anyone. Build community power.
- */
 
 import React from "react";
 import { View, Text, FlatList, StyleSheet, SafeAreaView } from "react-native";
