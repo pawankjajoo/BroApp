@@ -1,23 +1,3 @@
-/**
- * AuthScreen.js — Your Gateway to Brotherhood
- * ───────────────────────────────────────────────────────────────────────────
- * The entrance to the BRO app. First thing users see, hardened to stay secure.
- *
- * GEOPOLITICAL MESSAGING: In turbulent times, loyalty becomes rare. This screen
- * sets the tone: borders shift, alliances crumble, but your bros? Constant.
- * Unshakeable. Ready to show up when it matters.
- *
- * SECURITY ARCHITECTURE:
- *   1. Smart state machine (welcome → signup/signin → verify/captcha → authenticated)
- *   2. Email + Password sign-up with cryptographic verification links
- *   3. Email + Password sign-in with rate limiting per device
- *   4. OAuth shortcuts via Google & Facebook (trust their auth layer)
- *   5. Adaptive CAPTCHA (invisible behavior tracking + proof-of-work for suspects)
- *   6. Device fingerprinting & 1-account-per-person enforcement
- *   7. Anti-bot measures throughout: behavioral analysis, rate limits, bot detection
- *
- * FLOWS: Smooth for humans. Brutal for bots.
- */
 
 import React, { useState, useRef, useEffect } from "react";
 import {
@@ -42,11 +22,9 @@ WebBrowser.maybeCompleteAuthSession();
 
 export default function AuthScreen({ onAuthSuccess, showToast }) {
   // ── STATE MACHINE ────────────────────────────────────────────────────
-  // Core navigation through the auth flow. Each mode represents a screen state:
   //   "welcome"  → initial landing (tagline, OAuth buttons, email/password options)
   //   "signup"   → email + password creation + anti-bot proof-of-work
   //   "signin"   → email + password verification + rate limit checks
-  //   "verify"   → email link confirmation pending (user clicks link, returns here)
   //   "captcha"  → suspicious behavior detected; simple math challenge + proof-of-work
   const [mode, setMode]             = useState("welcome");
 
@@ -65,9 +43,7 @@ export default function AuthScreen({ onAuthSuccess, showToast }) {
   const slideAnim = useRef(new Animated.Value(30)).current;
 
   // ── OAUTH FLOWS ──────────────────────────────────────────────────────
-  // Delegate trust to Google & Facebook. Their auth layers handle identity.
-  // We exchange tokens for user records in our backend.
-  // Google OAuth (web + iOS + Android clients configured)
+  // Delegate trust to Google & Facebook. Their auth layers handle identity.  // We exchange tokens for user records in our backend.  // Google OAuth (web + iOS + Android clients configured)
   const [googleRequest, googleResponse, googlePromptAsync] = GoogleAuth.useAuthRequest({
     iosClientId:     AUTH_CONFIG.google.iosClientId,
     androidClientId: AUTH_CONFIG.google.androidClientId,
@@ -93,8 +69,7 @@ export default function AuthScreen({ onAuthSuccess, showToast }) {
   }, []);
 
   // ── GOOGLE OAUTH HANDLER ─────────────────────────────────────────────
-  // User approved Google sign-in. Extract ID token and exchange for session.
-  useEffect(() => {
+  // User approved Google sign-in. Extract ID token and exchange for session.  useEffect(() => {
     if (googleResponse?.type === "success") {
       const { id_token } = googleResponse.params;
       handleGoogleAuth(id_token);
@@ -102,8 +77,7 @@ export default function AuthScreen({ onAuthSuccess, showToast }) {
   }, [googleResponse]);
 
   // ── FACEBOOK OAUTH HANDLER ───────────────────────────────────────────
-  // User approved Facebook sign-in. Extract access token and exchange for session.
-  useEffect(() => {
+  // User approved Facebook sign-in. Extract access token and exchange for session.  useEffect(() => {
     if (fbResponse?.type === "success") {
       const { access_token } = fbResponse.params;
       handleFacebookAuth(access_token);
@@ -111,24 +85,19 @@ export default function AuthScreen({ onAuthSuccess, showToast }) {
   }, [fbResponse]);
 
   // ── EMAIL SIGN UP HANDLER ──────────────────────────────────────────────
-  // New account creation. Multi-layer bot defense: behavior analisys → proof-of-work.
-  const handleSignUp = async () => {
+  // New account creation. Multi-layer bot defense: behavior analisys → proof-of-work.  const handleSignUp = async () => {
     recordBehaviorEvent("tap", { target: "sign_up" });
     setError(null);
     setLoading(true);
 
     // ANTI-BOT LAYER 1: Invisible CAPTCHA
-    // Behavioral analysis (cursor movements, tap patterns, timing) runs silently.
-    // If something looks suspicious, we ask for math proof instead of blind creation.
-    if (shouldShowVisualCaptcha()) {
       setLoading(false);
       setMode("captcha");
       return;
     }
 
     // ANTI-BOT LAYER 2: Proof-of-Work Challenge
-    // Force computational cost on signup. Humans solve it instantly. Bots burn CPU cycles.
-    const pow = generateProofOfWorkChallenge();
+    // Force computational cost on signup. Humans solve it instantly. Bots burn CPU cycles.    const pow = generateProofOfWorkChallenge();
     await solveProofOfWork(pow.challenge, pow.difficulty);
 
     // Account creation in Firebase + record in DB (display name optional)
@@ -136,8 +105,6 @@ export default function AuthScreen({ onAuthSuccess, showToast }) {
     setLoading(false);
 
     if (result.success) {
-      // Email verification is mandatory. User receives cryptographic link via email.
-      if (result.needsVerification) {
         setMode("verify");
         showToast("Account created! Check your email to verify. ✉️");
       } else {
@@ -150,8 +117,7 @@ export default function AuthScreen({ onAuthSuccess, showToast }) {
   };
 
   // ── EMAIL SIGN IN HANDLER ──────────────────────────────────────────────
-  // Returning user authentication. Rate-limited by device fingerprint + email.
-  const handleSignIn = async () => {
+  // Returning user authentication. Rate-limited by device fingerprint + email.  const handleSignIn = async () => {
     recordBehaviorEvent("tap", { target: "sign_in" });
     setError(null);
     setLoading(true);
@@ -168,8 +134,7 @@ export default function AuthScreen({ onAuthSuccess, showToast }) {
   };
 
   // ── GOOGLE OAUTH EXCHANGE ──────────────────────────────────────────────
-  // Token verification via Firebase + claim Google account data (email, name, photo).
-  const handleGoogleAuth = async (idToken) => {
+  // Token verification via Firebase + claim Google account data (email, name, photo).  const handleGoogleAuth = async (idToken) => {
     setError(null);
     setLoading(true);
     const result = await signInWithGoogle(idToken);
@@ -182,8 +147,7 @@ export default function AuthScreen({ onAuthSuccess, showToast }) {
   };
 
   // ── FACEBOOK OAUTH EXCHANGE ───────────────────────────────────────────
-  // Token verification via Firebase + claim Facebook account data.
-  const handleFacebookAuth = async (accessToken) => {
+  // Token verification via Firebase + claim Facebook account data.  const handleFacebookAuth = async (accessToken) => {
     setError(null);
     setLoading(true);
     const result = await signInWithFacebook(accessToken);
@@ -196,24 +160,16 @@ export default function AuthScreen({ onAuthSuccess, showToast }) {
   };
 
   // ── CAPTCHA CHALLENGE ──────────────────────────────────────────────────
-  // Suspicious signup detected (erratic taps, non-human timing patterns, VPN, etc).
-  // Require simple arithmetic proof. Bots fail silently. Humans breeze through.
-  const handleCaptchaSubmit = () => {
     recordBehaviorEvent("tap", { target: "captcha_submit" });
     if (captchaAnswer === "7") {
-      // Correct answer. Proceed to full signup with proof-of-work next.
-      setMode("signup");
+      // Correct answer. Proceed to full signup with proof-of-work next.      setMode("signup");
       handleSignUp();
     } else {
-      // Wrong answer. Clear field, show error, user tries again (no rate limit here).
-      setError("Wrong answer. Try again, bro.");
+      // Wrong answer. Clear field, show error, user tries again (no rate limit here).      setError("Wrong answer. Try again, bro.");
       setCaptchaAnswer("");
     }
   };
 
-  // ── EMAIL VERIFICATION RESEND ──────────────────────────────────────────
-  // User missed the initial verification email. Send it again (rate-limited server-side).
-  const handleResendVerification = async () => {
     const result = await resendVerificationEmail();
     if (result.success) {
       showToast("Verification email sent! ✉️");
@@ -224,8 +180,7 @@ export default function AuthScreen({ onAuthSuccess, showToast }) {
 
   // ── WELCOME SCREEN ──────────────────────────────────────────────────────
   // The first screen users see. Sets emotional tone: brotherhood endures when the
-  // world doesn't. OAuth shortcuts + email/password options below.
-  if (mode === "welcome") {
+  // world doesn't. OAuth shortcuts + email/password options below.  if (mode === "welcome") {
     return (
       <SafeAreaView style={styles.container}>
         <Animated.View style={[styles.content, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
@@ -258,7 +213,7 @@ export default function AuthScreen({ onAuthSuccess, showToast }) {
               <View style={styles.dividerLine} />
             </View>
 
-            {/* OAuth: Trust Google's auth layer. Fast, seamless, widely supported. */}
+            {/* OAuth: Trust Google's auth layer. Fast, , widely supported. */}
             <TouchableOpacity
               style={styles.oauthBtn}
               onPress={() => googlePromptAsync()}
@@ -285,16 +240,14 @@ export default function AuthScreen({ onAuthSuccess, showToast }) {
           {/* Legal notice + anti-bot messaging */}
           <Text style={styles.legalTxt}>
             By continuing, you agree to Bro's Terms of Service and Privacy Policy.{"\n"}
-            One account per person. Bots get bro'd out.
-          </Text>
+            One account per person. Bots get bro'd out.          </Text>
         </Animated.View>
       </SafeAreaView>
     );
   }
 
   // ── SIGNUP SCREEN ───────────────────────────────────────────────────────
-  // New account creation. Anti-bot layers active. Email verification mandatory.
-  if (mode === "signup") {
+  // New account creation. Anti-bot layers active. Email verification mandatory.  if (mode === "signup") {
     return (
       <SafeAreaView style={styles.container}>
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
@@ -369,8 +322,7 @@ export default function AuthScreen({ onAuthSuccess, showToast }) {
   }
 
   // ── SIGNIN SCREEN ───────────────────────────────────────────────────────
-  // Existing user authentication. Rate-limited per device fingerprint.
-  if (mode === "signin") {
+  // Existing user authentication. Rate-limited per device fingerprint.  if (mode === "signin") {
     return (
       <SafeAreaView style={styles.container}>
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
@@ -443,16 +395,13 @@ export default function AuthScreen({ onAuthSuccess, showToast }) {
   }
 
   // ── EMAIL VERIFICATION SCREEN ───────────────────────────────────────────
-  // User created account. Verification email sent. Waiting for them to click link.
-  if (mode === "verify") {
     return (
       <SafeAreaView style={styles.container}>
         <Animated.View style={[styles.content, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
           <Text style={styles.stepTitle}>CHECK YOUR EMAIL</Text>
           <Text style={styles.stepDesc}>
             We sent a verification link to {email}.{"\n\n"}
-            Click the link in your email, then come back and tap "I Verified" below.
-          </Text>
+            Click the link in your email, then come back and tap "I Verified" below.          </Text>
 
           {/* User clicked link, verified their email on Firebase side. Grant access. */}
           <TouchableOpacity
@@ -462,7 +411,7 @@ export default function AuthScreen({ onAuthSuccess, showToast }) {
               onAuthSuccess({ email, emailVerified: true }, {});
             }}
           >
-            <Text style={styles.primaryBtnTxt}>I VERIFIED — LET ME IN</Text>
+            <Text style={styles.primaryBtnTxt}>I VERIFIED . LET ME IN</Text>
           </TouchableOpacity>
 
           {/* Resend link if user didn't recieve it or it expired (rate-limited) */}
@@ -477,9 +426,7 @@ export default function AuthScreen({ onAuthSuccess, showToast }) {
   }
 
   // ── CAPTCHA SCREEN ──────────────────────────────────────────────────────
-  // Anti-bot checkpoint. Behavioral analysis detected suspicious activity.
-  // Simple math problem filters out automated attacks.
-  if (mode === "captcha") {
+  // Anti-bot checkpoint. Behavioral analysis detected suspicious activity.  // Simple math problem filters out automated attacks.  if (mode === "captcha") {
     return (
       <SafeAreaView style={styles.container}>
         <Animated.View style={[styles.content, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
